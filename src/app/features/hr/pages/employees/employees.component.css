@@ -1,0 +1,13 @@
+/* Employees: page-specific layout. Shared controls retain their own styles. */
+:host { display:block; min-width:0; }
+.page-heading { margin-bottom:24px; }
+.page-heading p { max-width:64ch; }
+.metric-grid { margin-bottom:24px; }
+.page-note { margin:0 0 18px; font-size:14px; }
+@media(max-width:760px) { .page-heading { gap:16px; } }
+
+.workload-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;padding:0 23px 23px }
+.workload-grid>div { padding:14px;background:#f7f9fd;border:1px solid #ebeff5;border-radius:8px }
+.workload-grid strong { font-size:13px }
+.workload-grid span { display:block;margin-top:9px;font-size:12px;color:#7a8ca6 }
+.workload-grid small { display:block;margin-top:9px;font-size:12px;color:#7a8ca6 }

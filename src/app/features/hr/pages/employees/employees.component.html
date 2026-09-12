@@ -1,0 +1,12 @@
+<div class="page-heading">
+ <div><div class="eyebrow">PEOPLE & HR / EMPLOYEES</div><h1>Employees</h1><p>Manage employee information and review team workload.</p></div>
+ <button class="primary" (click)="open()" *ngIf="canCreate">＋ Add record</button>
+</div>
+<div class="metric-grid compact">
+ <article class="metric"><span>Total employees</span><strong>{{rows.length}}</strong><small>Matching current filters</small></article>
+ <article class="metric"><span>Needs attention</span><strong>{{overdue}}</strong><small>Past due date</small></article>
+ <article class="metric"><span>{{summaryAmount?'Tracked value':'Workflow stages'}}</span><strong>{{summaryAmount?('₹'+summaryAmount.toLocaleString('en-IN')):tab.statuses.length}}</strong><small>Across these records</small></article>
+</div>
+<section class="panel" *ngIf="key==='hr'&&tab.key==='employees'"><div class="panel-heading"><div><h2>Team workload</h2><p>Project and task assignments by employee</p></div></div><div class="workload-grid"><div *ngFor="let e of workload"><strong>{{e.name}}</strong><span>{{e.projects.length}} projects · {{e.tasks.length}} tasks</span><small *ngFor="let t of e.tasks">{{t.title}} — {{pretty(t.status)}}</small></div></div></section>
+<app-record-table [vm]="this" />
+<app-record-editor [vm]="this" />

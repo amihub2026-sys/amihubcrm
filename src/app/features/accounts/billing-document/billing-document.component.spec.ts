@@ -1,0 +1,2 @@
+import {test} from 'node:test';import assert from 'node:assert/strict';import {routes} from '../../../app.routes';
+test('billing document routes enforce resource permissions',()=>{const shell=routes.find(r=>r.path==='');for(const name of ['invoices','quotations','payments']){const route=shell?.children?.find(r=>r.path==='billing/'+name+'/:id');assert.ok(route?.canActivate?.length);assert.equal(route?.data?.['resource'],name);}});

@@ -1,0 +1,5 @@
+import {test} from 'node:test';import assert from 'node:assert/strict';import {campaignMetrics,nextCycle,promiseBalance} from './business-metrics';
+test('ad cost per lead and conversion rate use spend, not service fees',()=>{const result=campaignMetrics([{budget:5000,actualSpend:4000,leadCount:80,conversions:8}]);assert.equal(result.costPerLead,50);assert.equal(result.conversionRate,.1);assert.equal(result.remaining,1000);});
+test('zero leads has no cost-per-lead or conversion-rate value',()=>{assert.equal(campaignMetrics([{actualSpend:1000,leadCount:0}]).costPerLead,null);});
+test('monthly and yearly dates clamp safely at month end',()=>{assert.equal(nextCycle('2026-01-31','Monthly'),'2026-02-28');assert.equal(nextCycle('2028-02-29','Yearly'),'2029-02-28');});
+test('a payment promise does not itself reduce money owed',()=>{const promise={id:'P1',amount:20000};assert.equal(promiseBalance(promise,[]),20000);assert.equal(promiseBalance(promise,[{promiseId:'OTHER',amount:5000}]),20000);assert.equal(promiseBalance(promise,[{promiseId:'P1',amount:5000}]),15000);});

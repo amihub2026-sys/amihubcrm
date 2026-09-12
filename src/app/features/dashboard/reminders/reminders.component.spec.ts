@@ -1,0 +1,2 @@
+import {test} from 'node:test';import assert from 'node:assert/strict';import {testContext} from '../../../../testing/test-context';import {RemindersComponent} from './reminders.component';
+test('read status does not mutate an invoice',()=>{const c=testContext(RemindersComponent);const row=c.store.list('invoices')[0];const before=structuredClone(row);const reminder=c.page.service.items.find(i=>i.resource==='invoices');if(reminder)c.page.service.markRead(reminder.id);assert.deepEqual(c.store.list('invoices')[0],before);c.dispose();});

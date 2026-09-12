@@ -1,0 +1,3 @@
+import {Component,inject,OnInit} from '@angular/core';import {CommonModule} from '@angular/common';import {RouterOutlet} from '@angular/router';import {SidebarComponent} from '../sidebar/sidebar.component';import {HeaderComponent} from '../header/header.component';import {CrmStore} from '../../core/services/crm-store.service';
+@Component({selector:'app-shell',standalone:true,imports:[CommonModule,RouterOutlet,SidebarComponent,HeaderComponent],templateUrl:'./shell.component.html',styleUrl:'./shell.component.css'})
+export class ShellComponent implements OnInit {readonly store=inject(CrmStore);ngOnInit(){void this.reload();}async reload(){try{await this.store.loadRemote();}catch{/* The store exposes the retry state. */}}}

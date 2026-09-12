@@ -1,0 +1,9 @@
+<section class="digital-marketing-workspace" aria-label="Digital Marketing">
+  <nav class="section-navigation" aria-label="Digital Marketing screens">
+    <a *ngIf="access.can('plans')" routerLink="plans" routerLinkActive="active">Monthly plans</a>
+    <a *ngIf="access.can('content')" routerLink="content" routerLinkActive="active">Content calendar</a>
+    <a *ngIf="access.can('campaigns')" routerLink="campaigns" routerLinkActive="active">Ad campaigns</a>
+    <a *ngIf="access.can('campaignLeads')" routerLink="campaignLeads" routerLinkActive="active">Campaign enquiries</a>
+  </nav>
+  <router-outlet />
+</section>

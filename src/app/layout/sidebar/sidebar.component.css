@@ -1,0 +1,37 @@
+
+.sidebar { width:248px;background:var(--navy);color:#a6b4cb;position:fixed;inset:0 auto 0 0;display:flex;flex-direction:column;padding:33px 18px 20px;overflow:auto;z-index:30 }
+.workspace-switch { display:flex;align-items:center;gap:11px;border:1px solid #ffffff1c;border-radius:8px;padding:12px;margin:34px 6px 29px }
+.workspace-switch strong { font-size:13px;color:#e7edf7;display:block }
+.workspace-switch small { font-size:11px;display:block;margin-top:4px;color:#9bacc7 }
+.workspace-switch>span:last-child { margin-left:auto }
+.company-icon { background:#ffffff10;color:#b9cff4;padding:9px 12px;border-radius:6px }
+.nav-caption { font-size:10px;letter-spacing:1.6px;color:#7d91b2;margin:0 15px 15px }
+.sidebar nav { display:grid;gap:5px }
+.sidebar nav a { display:flex;gap:13px;align-items:center;padding:12px 15px;border-radius:7px;font-weight:500;font-size:14px;min-height:44px }
+.nav-icon { width:19px;text-align:center;font-size:19px;color:#97a9c4 }
+.sidebar nav a:hover { background:#ffffff09;color:white }
+.sidebar nav a.active { color:white;background:#2b4771 }
+.sidebar nav a.active .nav-icon { color:#b5d0ff }
+.active-dot { width:5px;height:5px;border-radius:50%;background:transparent;margin-left:auto }
+.active .active-dot { background:#8bb5ff }
+.sidebar-foot { margin-top:auto;padding-top:25px }
+.workspace-help { border:1px solid #ffffff12;border-radius:8px;padding:16px 13px;background:#ffffff04;margin:12px 6px 21px }
+.workspace-help>span { font-size:9px;letter-spacing:1.2px;color:#889ec0 }
+.workspace-help strong { display:block;color:#cfdcf0;font-size:12px;margin:9px 0 6px }
+.workspace-help p { font-size:11px;color:#889dbd;line-height:1.7 }
+.sidebar-bottom { display:flex;align-items:center;gap:7px;font-size:11px;padding:0 10px }
+.sidebar-bottom small { margin-left:auto;font-size:10px }
+.status-dot { width:6px;height:6px;background:#68bba9;border-radius:100% }
+.sidebar-bottom { font-size:12px }
+.workspace-help p { font-size:12px }
+.sidebar nav a { font-size:14px }
+.workspace-help>span { font-size:10px }
+.nav-caption { font-size:10px }
+@media(max-width:1200px) {
+.sidebar { width:222px;padding-left:12px;padding-right:12px }
+.sidebar .brand strong { font-size:22px }
+}
+@media(max-width:760px) {
+.sidebar { transform:translateX(-100%);transition:transform .2s;width:248px }
+:host-context(.nav-open) .sidebar { transform:translateX(0) }
+}

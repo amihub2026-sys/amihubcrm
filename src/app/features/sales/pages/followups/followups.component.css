@@ -1,0 +1,7 @@
+/* Follow-ups: page-specific layout. Shared controls retain their own styles. */
+:host { display:block; min-width:0; }
+.page-heading { margin-bottom:24px; }
+.page-heading p { max-width:64ch; }
+.metric-grid { margin-bottom:24px; }
+.page-note { margin:0 0 18px; font-size:14px; }
+@media(max-width:760px) { .page-heading { gap:16px; } }

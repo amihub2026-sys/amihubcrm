@@ -1,0 +1,7 @@
+<section class="support-renewals-workspace" aria-label="Support & Renewals">
+  <nav class="section-navigation" aria-label="Support & Renewals screens">
+    <a *ngIf="access.can('tickets')" routerLink="tickets" routerLinkActive="active">Support tickets</a>
+    <a *ngIf="access.can('renewals')" routerLink="renewals" routerLinkActive="active">Renewals</a>
+  </nav>
+  <router-outlet />
+</section>

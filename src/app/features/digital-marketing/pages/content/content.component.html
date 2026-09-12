@@ -1,0 +1,12 @@
+<div class="page-heading">
+ <div><div class="eyebrow">DIGITAL MARKETING / CONTENT CALENDAR</div><h1>Content calendar</h1><p>Track creative work from planning through publication.</p></div>
+ <button class="primary" (click)="open()" *ngIf="canCreate">＋ Add record</button>
+</div>
+<div class="metric-grid compact">
+ <article class="metric"><span>Total content calendar</span><strong>{{rows.length}}</strong><small>Matching current filters</small></article>
+ <article class="metric"><span>Needs attention</span><strong>{{overdue}}</strong><small>Past due date</small></article>
+ <article class="metric"><span>{{summaryAmount?'Tracked value':'Workflow stages'}}</span><strong>{{summaryAmount?('₹'+summaryAmount.toLocaleString('en-IN')):tab.statuses.length}}</strong><small>Across these records</small></article>
+</div>
+
+<app-record-table [vm]="this" />
+<app-record-editor [vm]="this" />

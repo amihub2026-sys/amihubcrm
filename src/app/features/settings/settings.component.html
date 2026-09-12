@@ -1,0 +1,9 @@
+<section class="settings-workspace" aria-label="Settings">
+  <nav class="section-navigation" aria-label="Settings screens">
+    <a *ngIf="access.can('users')" routerLink="users" routerLinkActive="active">User access</a>
+    <a *ngIf="access.can('services')" routerLink="services" routerLinkActive="active">Services</a>
+    <a *ngIf="access.can('departments')" routerLink="departments" routerLinkActive="active">Departments</a>
+    <a *ngIf="access.can('billingProfile')" routerLink="billingProfile" routerLinkActive="active">Billing profile</a>
+  </nav>
+  <router-outlet />
+</section>

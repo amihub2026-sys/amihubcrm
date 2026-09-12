@@ -1,0 +1,8 @@
+<section class="projects-workspace" aria-label="Projects">
+  <nav class="section-navigation" aria-label="Projects screens">
+    <a *ngIf="access.can('projects')" routerLink="projects" routerLinkActive="active">All projects</a>
+    <a *ngIf="access.can('tasks')" routerLink="tasks" routerLinkActive="active">Tasks</a>
+    <a *ngIf="access.can('files')" routerLink="files" routerLinkActive="active">Project files</a>
+  </nav>
+  <router-outlet />
+</section>

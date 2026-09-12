@@ -1,0 +1,5 @@
+:host { display: block; min-width: 0; }
+.section-navigation { display:flex; gap:24px; overflow-x:auto; border-bottom:1px solid var(--line); margin-bottom:26px; }
+.section-navigation a { color:var(--muted); font-size:14px; padding:12px 0; border-bottom:2px solid transparent; white-space:nowrap; }
+.section-navigation a.active { color:var(--blue); border-color:var(--blue); }
+@media(max-width:760px) { .section-navigation { gap:18px; margin-bottom:20px; } }

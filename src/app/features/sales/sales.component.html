@@ -1,0 +1,10 @@
+<section class="sales-workspace" aria-label="Sales">
+  <nav class="section-navigation" aria-label="Sales screens">
+    <a *ngIf="access.can('leads')" routerLink="leads" routerLinkActive="active">Leads</a>
+    <a *ngIf="access.can('calls')" routerLink="calls" routerLinkActive="active">Call activity</a>
+    <a *ngIf="access.can('followups')" routerLink="followups" routerLinkActive="active">Follow-ups</a>
+    <a *ngIf="access.can('meetings')" routerLink="meetings" routerLinkActive="active">Meetings</a>
+    <a *ngIf="access.can('quotations')" routerLink="quotations" routerLinkActive="active">Quotations</a>
+  </nav>
+  <router-outlet />
+</section>

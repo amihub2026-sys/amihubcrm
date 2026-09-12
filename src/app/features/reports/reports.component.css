@@ -1,0 +1,18 @@
+
+.report-panel { padding-bottom:25px }
+.report-bar { display:flex;align-items:center;gap:20px;padding:17px 25px }
+.report-bar>span { width:160px;font-size:12px;text-transform:capitalize }
+.report-bar>div { height:15px;background:#f0f4fb;border-radius:4px;flex:1 }
+.report-bar i { display:block;height:100%;background:#4c76cc;border-radius:4px }
+.report-bar strong { font-size:14px;width:30px }
+.report-bar small { width:40px }
+.report-bar>span { font-size:14px }
+@media(max-width:760px) {
+.report-bar { gap:10px;padding:17px }
+.report-bar>span { width:100px;font-size:12px }
+}
+/* Report tables are owned by Reports, independently of the shared record table. */
+.table-scroll { overflow-x:auto; }
+table { width:100%; border-collapse:collapse; text-align:left; white-space:nowrap; }
+th { padding:13px 18px; background:#f9fafc; color:var(--muted); font-size:12px; font-weight:500; border-bottom:1px solid var(--line); }
+td { padding:17px 18px; font-size:14px; color:#67778e; border-bottom:1px solid var(--line); }

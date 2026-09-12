@@ -1,0 +1,79 @@
+<main class="login-page">
+  <section class="login-story">
+    <a class="brand"
+      ><div class="brand-mark">A</div>
+      <div><strong>AMI HUB.</strong><span>BUSINESS WORKSPACE</span></div></a
+    >
+    <div>
+      <div class="eyebrow">ONE COMPANY. ONE CONNECTED WORKSPACE.</div>
+      <h1>
+        Good relationships.<br />Great teamwork.<br /><em>Better business.</em>
+      </h1>
+      <p>
+        Your workspace for sales, delivery,<br />people and customer success.
+      </p>
+    </div>
+    <small>AMI HUB · Madurai, India</small>
+  </section>
+  <section class="login-form-area">
+    <div class="login-card">
+      <span class="badge blue">TEAM SIGN IN</span>
+      <h2>Welcome to your workspace</h2>
+      <p>Sign in with the account provided by your administrator.</p>
+      <div class="preview-entry" *ngIf="auth.preview">
+        <p>
+          UI preview uses fictional records and does not authenticate a real
+          account.
+        </p>
+        <button class="primary" (click)="auth.setPreviewRole('owner')">
+          Open sample workspace
+        </button>
+      </div>
+      <form *ngIf="!auth.preview" (ngSubmit)="submit()" #form="ngForm">
+        <label for="email">Work email</label
+        ><input
+          id="email"
+          type="email"
+          name="email"
+          [(ngModel)]="email"
+          required
+          email
+          autocomplete="username"
+          [disabled]="busy()"
+        /><label for="password">Password</label>
+        <div class="password-field">
+          <input
+            id="password"
+            [type]="showPassword ? 'text' : 'password'"
+            name="password"
+            [(ngModel)]="password"
+            required
+            autocomplete="current-password"
+            [disabled]="busy()"
+          /><button
+            type="button"
+            [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'"
+            (click)="showPassword = !showPassword"
+          >
+            {{ showPassword ? "Hide" : "Show" }}
+          </button>
+        </div>
+        <p class="error" role="alert" *ngIf="error()">{{ error() }}</p>
+        <p class="error" role="status" *ngIf="auth.sessionMessage()">
+          {{ auth.sessionMessage() }}
+        </p>
+        <button
+          class="primary"
+          type="submit"
+          [disabled]="form.invalid || busy()"
+        >
+          {{ busy() ? "Signing in…" : "Sign in →" }}
+        </button>
+      </form>
+      <p class="login-note">
+        Your account determines which departments and records you can access.
+        For account access or a password reset, contact your administrator.
+      </p>
+    </div>
+  </section>
+</main>

@@ -1,0 +1,11 @@
+<section class="accounts-workspace" aria-label="Accounts">
+  <nav class="section-navigation" aria-label="Accounts screens">
+    <a *ngIf="access.can('invoices')" routerLink="invoices" routerLinkActive="active">Invoices</a>
+    <a *ngIf="access.can('installments')" routerLink="installments" routerLinkActive="active">Installments</a>
+    <a *ngIf="access.can('payments')" routerLink="payments" routerLinkActive="active">Payments</a>
+    <a *ngIf="access.can('expenses')" routerLink="expenses" routerLinkActive="active">Expenses</a>
+    <a *ngIf="access.can('promises')" routerLink="promises" routerLinkActive="active">Payment promises</a>
+    <a *ngIf="access.can('subscriptions')" routerLink="subscriptions" routerLinkActive="active">Recurring services</a>
+  </nav>
+  <router-outlet />
+</section>

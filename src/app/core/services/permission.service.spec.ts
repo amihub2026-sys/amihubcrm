@@ -1,0 +1,10 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {testContext} from '../../../testing/test-context';
+import {PermissionService} from './permission.service';
+import {SECTIONS} from '../models/permissions.model';
+test('owner can perform every defined action across all resources',async()=>{const c=testContext(PermissionService);for(const resources of Object.values(SECTIONS))for(const resource of resources)for(const action of ['read','create','update','delete','export'] as const)assert.equal(c.page.can(resource,action),true);c.dispose();});
+test('telecaller cannot read quotes, accounts, settings, or export leads',async()=>{const c=testContext(PermissionService,'telecaller');for(const resource of ['quotations','invoices','users','projects'])assert.equal(c.page.can(resource),false);assert.equal(c.page.can('leads','export'),false);assert.equal(c.page.can('calls','create'),true);c.dispose();});
+test('HR can view delivery but cannot edit it or see project budgets',async()=>{const c=testContext(PermissionService,'hr');assert.equal(c.page.can('projects'),true);assert.equal(c.page.can('projects','update'),false);assert.equal(c.page.canField('projects','budget'),false);assert.equal(c.page.can('employees','create'),true);c.dispose();});
+test('assigned work matching is exact, never a partial name match',async()=>{const c=testContext(PermissionService,'developer');assert.equal(c.page.visible('tasks',{assignedTo:'Arjun M'},{}),true);assert.equal(c.page.visible('tasks',{assignedTo:'Arjun M Kumar'},{}),false);assert.equal(c.page.visible('tasks',{assignedTo:'Someone else'},{}),false);c.dispose();});
+test('support cannot access finance and accounts cannot edit technical work',async()=>{const s=testContext(PermissionService,'support');assert.equal(s.page.can('invoices'),false);assert.equal(s.page.can('tickets','update'),true);s.dispose();const a=testContext(PermissionService,'accounts');assert.equal(a.page.can('tasks','update'),false);assert.equal(a.page.can('payments','create'),true);a.dispose();});

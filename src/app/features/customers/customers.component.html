@@ -1,0 +1,8 @@
+<section class="customers-workspace" aria-label="Customers">
+  <nav class="section-navigation" aria-label="Customers screens">
+    <a *ngIf="access.can('customers')" routerLink="customers" routerLinkActive="active">All customers</a>
+    <a *ngIf="access.can('visits')" routerLink="visits" routerLinkActive="active">Customer visits</a>
+<a *ngIf="access.can('promises')" routerLink="promises" routerLinkActive="active">Payment promises</a>
+  </nav>
+  <router-outlet />
+</section>

@@ -1,0 +1,8 @@
+<section class="hr-workspace" aria-label="People & HR">
+  <nav class="section-navigation" aria-label="People & HR screens">
+    <a *ngIf="access.can('employees')" routerLink="employees" routerLinkActive="active">Employees</a>
+    <a *ngIf="access.can('attendance')" routerLink="attendance" routerLinkActive="active">Attendance</a>
+    <a *ngIf="access.can('leave')" routerLink="leave" routerLinkActive="active">Leave requests</a>
+  </nav>
+  <router-outlet />
+</section>

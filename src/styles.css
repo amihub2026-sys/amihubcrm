@@ -1,0 +1,5 @@
+/* Global tokens and shared UI primitives only. Feature styling lives next to its component. */
+@import './styles/tokens.css';
+@import './styles/base.css';
+@import './styles/ui.css';
+@import './styles/shell.css';

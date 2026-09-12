@@ -1,0 +1,8 @@
+import {PermissionService} from '../../core/services/permission.service';
+import { Component,inject } from '@angular/core';import { CommonModule } from '@angular/common';import { FormsModule } from '@angular/forms';import { CrmStore } from '../../core/services/crm-store.service';import { AuthService } from '../../core/services/auth.service';
+@Component({selector:'app-reports',standalone:true,imports:[CommonModule,FormsModule],templateUrl:'./reports.component.html',styleUrl:'./reports.component.css'})
+export class ReportsComponent {access=inject(PermissionService);store=inject(CrmStore);auth=inject(AuthService);selected='';
+ get domains(){const r=this.auth.user()?.role;const all=[{key:'leads',name:'Sales pipeline',roles:['sales']},{key:'projects',name:'Project delivery',roles:['project_manager','hr']},{key:'employees',name:'People & attendance',roles:['hr']},{key:'content',name:'Marketing production',roles:['digital_marketing']},{key:'invoices',name:'Invoice collections',roles:['accounts']}];return all.filter(d=>['owner','admin'].includes(r||'')||d.roles.includes(r||''))}
+ get key(){return this.selected||this.domains[0]?.key||'leads'}get records(){return this.store.list(this.key).filter(x=>this.access.visible(this.key,x,this.store.records()))}get groups(){return [...new Set(this.records.map(r=>r.status))].map(status=>({status,count:this.records.filter(r=>r.status===status).length}))}
+ pretty(s:string){return s.replace(/_/g,' ')}print(){window.print()}
+ export(){const csv='Status,Count\n'+this.groups.map(g=>g.status+','+g.count).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='AMI-HUB-report.csv';a.click();URL.revokeObjectURL(a.href)} }

@@ -1,0 +1,14 @@
+.app-shell { display:flex;min-height:100vh }
+.main-column { margin-left:248px;min-width:0;flex:1 }
+.page-area { padding:32px 34px 45px;max-width:1700px;margin:auto }
+@media(min-width:1500px) {
+.page-area { padding:38px 45px }
+}
+@media(max-width:1200px) {
+.main-column { margin-left:222px }
+.page-area { padding:26px 24px }
+}
+@media(max-width:760px) {
+.main-column { margin-left:0 }
+.page-area { padding:23px 16px }
+}
