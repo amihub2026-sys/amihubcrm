@@ -8,15 +8,17 @@ export const HrConfig: Module = {
       "title": "Employees",
       "fields": [
         {
-          "key": "name",
-          "label": "Employee name",
-          "type": "text"
-        },
-        {
-          "key": "email",
-          "label": "Email",
-          "type": "email"
-        },
+  "key": "name",
+  "label": "Employee name",
+  "type": "text",
+  "required": true
+},
+       {
+  "key": "email",
+  "label": "Email",
+  "type": "email",
+  "required": true
+},
         {
           "key": "phone",
           "label": "Phone",
@@ -57,18 +59,20 @@ export const HrConfig: Module = {
     },
     {
       "key": "attendance",
-      "title": "Attendance",
-      "fields": [
-        {
-          "key": "employeeId",
-          "label": "Employee",
-          "type": "employee"
-        },
-        {
-          "key": "date",
-          "label": "Date",
-          "type": "date"
-        },
+"title": "Attendance",
+"fields": [
+  {
+    "key": "employeeId",
+    "label": "Employee",
+    "type": "employee",
+    "required": true
+  },
+       {
+  "key": "date",
+  "label": "Date",
+  "type": "date",
+  "required": true
+},
         {
           "key": "checkIn",
           "label": "Check-in",
@@ -92,31 +96,35 @@ export const HrConfig: Module = {
       "key": "leave",
       "title": "Leave requests",
       "fields": [
-        {
-          "key": "employeeId",
-          "label": "Employee",
-          "type": "employee"
-        },
+       {
+  "key": "employeeId",
+  "label": "Employee",
+  "type": "employee",
+  "required": true
+},
         {
           "key": "leaveType",
           "label": "Leave type",
           "type": "text"
         },
+       {
+  "key": "startDate",
+  "label": "Start date",
+  "type": "date",
+  "required": true
+},
         {
-          "key": "startDate",
-          "label": "Start date",
-          "type": "date"
-        },
+  "key": "endDate",
+  "label": "End date",
+  "type": "date",
+  "required": true
+},
         {
-          "key": "endDate",
-          "label": "End date",
-          "type": "date"
-        },
-        {
-          "key": "reason",
-          "label": "Reason",
-          "type": "textarea"
-        }
+  "key": "reason",
+  "label": "Reason",
+  "type": "textarea",
+  "required": true
+}
       ],
       "statuses": [
         "PENDING",
