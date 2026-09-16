@@ -27,11 +27,12 @@ export const ProjectsConfig: Module = {
           "label": "Description",
           "type": "textarea"
         },
-        {
-          "key": "projectManager",
-          "label": "Project manager",
-          "type": "employee"
-        },
+       {
+  "key": "projectManager",
+  "label": "Project manager",
+  "type": "employee",
+  "required": true
+},
         {
           "key": "assignedEmployees",
           "label": "Team",
