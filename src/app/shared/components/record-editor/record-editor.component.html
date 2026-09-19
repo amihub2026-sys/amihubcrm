@@ -1,3 +1,52 @@
+
+<div class="overlay" *ngIf="vm.detail" (click)="vm.detail=null"><section class="detail-panel" role="dialog" aria-modal="true" aria-label="Record details" (click)="$event.stopPropagation()" (keydown.escape)="vm.detail=null"><div class="drawer-top"><span class="eyebrow">{{vm.detail.id}}</span><button class="icon-btn" aria-label="Close details" (click)="vm.detail=null">×</button></div><h2>{{vm.label(vm.detail)}}</h2><span class="badge" [ngClass]="vm.tone(vm.recordStatus(vm.detail))">{{vm.pretty(vm.recordStatus(vm.detail))}}</span><div class="customer-summary" *ngIf="vm.tab.key==='customers'"><div *ngIf="vm.access.can('visits')"><strong>{{vm.related('visits').length}}</strong><span>Customer visits</span></div><div *ngIf="vm.access.can('projects')"><strong>{{vm.related('projects').length}}</strong><span>Projects</span></div><div *ngIf="vm.access.can('invoices')"><strong>{{vm.related('invoices').length}}</strong><span>Invoices</span></div><div *ngIf="vm.access.can('campaigns')"><strong>{{vm.related('campaigns').length}}</strong><span>Ad campaigns</span></div></div><div class="detail-actions"><button class="primary" *ngIf="vm.tab.key==='subscriptions'&&vm.detail.status==='ACTIVE'&&vm.access.can('invoices','create')" (click)="vm.billNextCycle(vm.detail)">Create next service invoice</button><button class="primary" *ngIf="vm.tab.key==='renewals'&&vm.canEdit" (click)="vm.renew(vm.detail)">Renew service</button><button class="primary" (click)="vm.open(vm.detail)" *ngIf="vm.canEditRecord(vm.detail)">Edit record</button><button class="secondary" *ngIf="vm.tab.key==='leads'&&vm.canEdit" (click)="vm.convert(vm.detail)">Convert to customer</button><a class="secondary" *ngIf="['invoices','quotations','payments'].includes(vm.tab.key)" [routerLink]="['/billing',vm.tab.key,vm.detail.id]">{{vm.tab.key==='payments'?'Open receipt':'Open printable bill'}}</a><button class="secondary" *ngIf="!['invoices','quotations','payments'].includes(vm.tab.key)" (click)="vm.print()">Print details</button><button class="danger" (click)="vm.confirmDelete=vm.detail" *ngIf="vm.canDelete">Delete</button></div><div class="tabs" *ngIf="['customers','projects','leads'].includes(vm.tab.key)"><button *ngFor="let t of ['Overview','Related records','Activity']" [class.active]="vm.detailTab===t" (click)="vm.detailTab=t">{{t}}</button></div><dl class="detail-fields" *ngIf="vm.detailTab==='Overview'"><ng-container *ngFor="let f of vm.visibleFields"><dt>{{f.label}}</dt><dd><a *ngIf="f.type==='url'&&vm.detail[f.key]" [href]="vm.detail[f.key]" target="_blank" rel="noopener noreferrer">Open file ↗</a><span *ngIf="f.type!=='password'&&(f.type!=='url'||!vm.detail[f.key])">{{vm.value(vm.detail,f)}}</span></dd></ng-container><ng-container *ngIf="vm.tab.key==='invoices'"><dt>Total</dt><dd>{{vm.store.total(vm.detail)|currency:'INR'}}</dd><dt>Received</dt><dd>{{vm.store.paid(vm.detail.id)|currency:'INR'}}</dd><dt>Outstanding</dt><dd>{{vm.store.balance(vm.detail)|currency:'INR'}}</dd></ng-container></dl><div *ngIf="vm.detailTab==='Related records'"><section *ngFor="let k of vm.relatedKeys"><h3>{{vm.pretty(k)}}</h3><p *ngFor="let r of vm.related(k)" class="related-row">{{vm.label(r)}} <span class="badge blue">{{vm.pretty(r.status)}}</span></p><p class="muted" *ngIf="!vm.related(k).length">No linked {{k}}.</p></section></div><div *ngIf="vm.detailTab==='Activity'"><ng-container *ngFor="let a of vm.store.activity()"><p *ngIf="a.text.includes(vm.detail.id)||a.text.includes(vm.label(vm.detail))">{{a.text}}<small>{{a.actor}} · {{a.date|date:'medium'}}</small></p></ng-container><p class="muted">Changes made in this frontend session appear here.</p></div></section></div>
+<div class="overlay modal-overlay" *ngIf="vm.modal" (keydown.escape)="vm.close()"><section class="modal" role="dialog" aria-modal="true" aria-labelledby="form-title"><div class="drawer-top"><div><span class="eyebrow">{{vm.tab.title}}</span><h2 id="form-title">{{vm.draft.id?'Edit record':'Create record'}}</h2></div><button class="icon-btn" aria-label="Close form" (click)="vm.close()">×</button></div><form (ngSubmit)="vm.save()" #form="ngForm"><section class="line-items" *ngIf="vm.commercial"><h3>Line items</h3><div class="line-item" *ngFor="let item of vm.draft.items;let i=index"><label>Description<input [name]="'itemDescription'+i" [(ngModel)]="item.description" required></label><label>Qty<input type="number" min="1" [name]="'itemQty'+i" [(ngModel)]="item.quantity" (ngModelChange)="vm.calcItems()" required></label><label>Unit price ₹<input type="number" min="0" [name]="'itemPrice'+i" [(ngModel)]="item.unitPrice" (ngModelChange)="vm.calcItems()" required></label><button class="icon-btn" type="button" (click)="vm.removeItem(i)" aria-label="Remove line item">×</button></div><button class="secondary" type="button" (click)="vm.addItem()">＋ Add line item</button><p>Total: {{vm.store.total(vm.draft)|currency:'INR'}}</p></section><div class="form-grid"><label *ngFor="let f of vm.visibleFields;let first=first" [class.full]="f.type==='textarea'">{{f.label}} <span *ngIf="first||f.required">*</span><textarea *ngIf="f.type==='textarea'" [name]="f.key" [(ngModel)]="vm.draft[f.key]" rows="3"></textarea>
+    
+    <!-- SINGLE REFERENCE SELECT -->
+<select
+  *ngIf="vm.refs[f.type] && f.type !== 'employee-list'"
+  [name]="f.key"
+  [(ngModel)]="vm.draft[f.key]"
+  [required]="first || !!f.required"
+>
+  <option value="">
+    Select {{ f.label.toLowerCase() }}
+  </option>
+
+  <option
+    *ngFor="let o of vm.options(f)"
+    [value]="o.id"
+  >
+    {{ vm.label(o) }}
+  </option>
+</select>
+
+
+<!-- MULTIPLE EMPLOYEE SELECT -->
+<select
+  *ngIf="f.type === 'employee-list'"
+  multiple
+  [name]="f.key"
+  [(ngModel)]="vm.draft[f.key]"
+  [required]="first || !!f.required"
+>
+  <option
+    *ngFor="let o of vm.options(f)"
+    [value]="o.id"
+  >
+    {{ vm.label(o) }}
+  </option>
+</select>
+<select *ngIf="f.type==='select'" [name]="f.key" [(ngModel)]="vm.draft[f.key]" [required]="!!f.required"><option value="">Choose an option</option>
+        <option *ngFor="let option of f.options" [value]="option">{{option}}</option></select><select *ngIf="f.type==='role'" [name]="f.key" [(ngModel)]="vm.draft[f.key]"><option *ngFor="let r of vm.roles" [value]="r">{{vm.pretty(r)}}</option></select><input *ngIf="!vm.refs[f.type]&&!['textarea','role','select'].includes(f.type)" [type]="f.type" [name]="f.key" [(ngModel)]="vm.draft[f.key]" [required]="first||!!f.required" [readOnly]="vm.commercial&&f.key==='subtotal'" [attr.min]="f.type==='number'?0:null" [attr.max]="f.key==='progress'?100:null"></label><label>Status<select name="status" [(ngModel)]="vm.draft.status"><option *ngFor="let s of vm.tab.statuses" [value]="s">{{vm.pretty(s)}}</option></select></label></div><p class="error" role="alert" *ngIf="vm.error">{{vm.error}}</p><footer class="modal-footer"><button type="button" class="secondary" (click)="vm.close()">Cancel</button><button type="submit" class="primary" [disabled]="form.invalid||vm.saving">{{vm.saving?'Saving…':'Save record'}}</button></footer></form></section></div>
+<div class="overlay modal-overlay" *ngIf="vm.confirmDelete">
+    <section class="modal small-modal" role="alertdialog" aria-modal="true" aria-label="Confirm deletion">
+        <h2>Delete this record?</h2>
+        <p>{{vm.label(vm.confirmDelete)}} will be removed from the CRM.</p>
+        <footer class="modal-footer">
+            <button class="secondary" (click)="vm.confirmDelete=null">Cancel</button>
+            <button class="danger" (click)="vm.remove()">Delete record</button>
+        </footer></section></div>
 <div class="overlay" *ngIf="vm.detail" (click)="vm.detail = null">
   <section
     class="detail-panel"
