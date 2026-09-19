@@ -7,21 +7,24 @@ export const DigitalMarketingConfig: Module = {
       "key": "plans",
       "title": "Monthly plans",
       "fields": [
+       {
+  "key": "title",
+  "label": "Plan name",
+  "type": "text",
+  "required": true
+},
         {
-          "key": "title",
-          "label": "Plan name",
-          "type": "text"
-        },
-        {
-          "key": "customerId",
-          "label": "Customer",
-          "type": "customer"
-        },
-        {
-          "key": "month",
-          "label": "Month",
-          "type": "month"
-        },
+  "key": "customerId",
+  "label": "Customer",
+  "type": "customer",
+  "required": true
+},
+     {
+  "key": "month",
+  "label": "Month",
+  "type": "month",
+  "required": true
+},
         {
           "key": "platforms",
           "label": "Platforms",
@@ -79,21 +82,24 @@ export const DigitalMarketingConfig: Module = {
       "key": "content",
       "title": "Content calendar",
       "fields": [
-        {
-          "key": "title",
-          "label": "Content title",
-          "type": "text"
-        },
-        {
-          "key": "marketingPlanId",
-          "label": "Marketing plan",
-          "type": "plan"
-        },
-        {
-          "key": "customerId",
-          "label": "Customer",
-          "type": "customer"
-        },
+      {
+  "key": "title",
+  "label": "Content title",
+  "type": "text",
+  "required": true
+},
+       {
+  "key": "marketingPlanId",
+    "label": "Marketing plan",
+  "type": "plan",
+  "required": true
+},
+       {
+  "key": "customerId",
+  "label": "Customer",
+  "type": "customer",
+  "required": true
+},
         {
           "key": "contentType",
           "label": "Content type",

@@ -8,15 +8,17 @@ export const AccountsConfig: Module = {
       "title": "Invoices",
       "fields": [
         {
-          "key": "invoiceNumber",
-          "label": "Invoice number",
-          "type": "text"
-        },
+  "key": "invoiceNumber",
+  "label": "Invoice number",
+  "type": "text",
+  "required": true
+},
         {
-          "key": "customerId",
-          "label": "Customer",
-          "type": "customer"
-        },
+  "key": "customerId",
+  "label": "Customer",
+  "type": "customer",
+  "required": true
+},
         {
           "key": "projectId",
           "label": "Project",
@@ -42,16 +44,19 @@ export const AccountsConfig: Module = {
           "label": "Discount",
           "type": "number"
         },
-        {
-          "key": "invoiceDate",
-          "label": "Invoice date",
-          "type": "date"
-        },
-        {
-          "key": "dueDate",
-          "label": "Due date",
-          "type": "date"
-        },
+      {
+  "key": "invoiceDate",
+  "label": "Invoice date",
+  "type": "date",
+  "required": true
+},
+
+{
+  "key": "dueDate",
+  "label": "Due date",
+  "type": "date",
+  "required": true
+},
         {
           "key": "subscriptionId",
           "label": "Recurring service",
