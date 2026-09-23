@@ -278,16 +278,20 @@ rows="3"
             [name]="f.key"
             [(ngModel)]="vm.draft[f.key]"
             [required]="first || !!f.required"
-            [readOnly]="vm.commercial && f.key === 'subtotal'"
+            [readOnly]="
+  f.readonly ||
+  (vm.commercial && f.key === 'subtotal')
+"
             [attr.min]="f.type === 'number' ? 0 : null"
             [attr.max]="f.key === 'progress' ? 100 : null" /></label
-        ><label
-          >Status<select name="status" [(ngModel)]="vm.draft.status">
-            <option *ngFor="let s of vm.tab.statuses" [value]="s">
-              {{ vm.pretty(s) }}
-            </option>
-          </select></label
-        >
+        ><label *ngIf="vm.showStatusField">
+  Status
+  <select name="status" [(ngModel)]="vm.draft.status">
+    <option *ngFor="let s of vm.tab.statuses" [value]="s">
+      {{ vm.pretty(s) }}
+    </option>
+  </select>
+</label>
       </div>
       <p class="error" role="alert" *ngIf="vm.error">{{ vm.error }}</p>
       <footer class="modal-footer">

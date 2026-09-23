@@ -1,24 +1,27 @@
 import { Module } from '../../core/models/crm-schema.model';
 
 export const AccountsConfig: Module = {
+
   "title": "Accounts",
+
   "tabs": [
+
     {
       "key": "invoices",
       "title": "Invoices",
       "fields": [
         {
-  "key": "invoiceNumber",
-  "label": "Invoice number",
-  "type": "text",
-  "required": true
-},
+          "key": "invoiceNumber",
+          "label": "Invoice number",
+          "type": "text",
+          "required": true
+        },
         {
-  "key": "customerId",
-  "label": "Customer",
-  "type": "customer",
-  "required": true
-},
+          "key": "customerId",
+          "label": "Customer",
+          "type": "customer",
+          "required": true
+        },
         {
           "key": "projectId",
           "label": "Project",
@@ -44,19 +47,18 @@ export const AccountsConfig: Module = {
           "label": "Discount",
           "type": "number"
         },
-      {
-  "key": "invoiceDate",
-  "label": "Invoice date",
-  "type": "date",
-  "required": true
-},
-
-{
-  "key": "dueDate",
-  "label": "Due date",
-  "type": "date",
-  "required": true
-},
+        {
+          "key": "invoiceDate",
+          "label": "Invoice date",
+          "type": "date",
+          "required": true
+        },
+        {
+          "key": "dueDate",
+          "label": "Due date",
+          "type": "date",
+          "required": true
+        },
         {
           "key": "subscriptionId",
           "label": "Recurring service",
@@ -79,6 +81,7 @@ export const AccountsConfig: Module = {
       ],
       "rows": []
     },
+
     {
       "key": "installments",
       "title": "Installments",
@@ -108,6 +111,7 @@ export const AccountsConfig: Module = {
           "label": "Notes",
           "type": "textarea"
         }
+        
       ],
       "statuses": [
         "PENDING",
@@ -117,6 +121,7 @@ export const AccountsConfig: Module = {
       ],
       "rows": []
     },
+
     {
       "key": "payments",
       "title": "Payments",
@@ -174,6 +179,7 @@ export const AccountsConfig: Module = {
       ],
       "rows": []
     },
+
     {
       "key": "expenses",
       "title": "Expenses",
@@ -221,6 +227,7 @@ export const AccountsConfig: Module = {
       ],
       "rows": []
     },
+
     {
       "key": "promises",
       "title": "Payment promises",
@@ -245,7 +252,7 @@ export const AccountsConfig: Module = {
         },
         {
           "key": "amount",
-          "label": "Promised amount \u20b9",
+          "label": "Promised amount ₹",
           "type": "number",
           "required": true
         },
@@ -283,6 +290,7 @@ export const AccountsConfig: Module = {
       ],
       "rows": []
     },
+
     {
       "key": "subscriptions",
       "title": "Recurring services",
@@ -315,7 +323,7 @@ export const AccountsConfig: Module = {
         },
         {
           "key": "amount",
-          "label": "Service fee per cycle \u20b9",
+          "label": "Service fee per cycle ₹",
           "type": "number",
           "required": true
         },
@@ -367,6 +375,134 @@ export const AccountsConfig: Module = {
         "CANCELLED"
       ],
       "rows": []
+    },
+
+    {
+      "key": "payroll",
+      "title": "Payroll",
+      "fields": [
+        {
+          "key": "employeeId",
+          "label": "Employee",
+          "type": "employee",
+          "required": true
+        },
+        {
+          "key": "month",
+          "label": "Salary month",
+          "type": "month",
+          "required": true
+        },
+        {
+          "key": "year",
+          "label": "Year",
+          "type": "number",
+          "required": true
+        },
+        {
+          "key": "otherDeduction",
+          "label": "Other deduction",
+          "type": "number"
+        },
+        {
+          "key": "bonus",
+          "label": "Bonus",
+          "type": "number"
+        },
+        {
+          "key": "allowance",
+          "label": "Allowance",
+          "type": "number"
+        },
+        {
+          "key": "paymentDate",
+          "label": "Payment date",
+          "type": "date"
+        },
+        {
+          "key": "paymentMethod",
+          "label": "Payment method",
+          "type": "text"
+        },
+        {
+          "key": "transactionReference",
+          "label": "Transaction reference",
+          "type": "text"
+        },
+        {
+          "key": "notes",
+          "label": "Notes",
+          "type": "textarea"
+        },
+        {
+          "key": "grossSalary",
+          "label": "Gross salary",
+          "type": "number"
+        },
+        {
+          "key": "workingDays",
+          "label": "Working days",
+          "type": "number"
+        },
+        {
+          "key": "presentDays",
+          "label": "Present days",
+          "type": "number"
+        },
+        {
+  "key": "absentDays",
+  "label": "Absent days",
+  "type": "number"
+},
+        {
+          "key": "halfDays",
+          "label": "Half days",
+          "type": "number"
+        },
+        {
+          "key": "casualLeaveDays",
+          "label": "Casual leave days",
+          "type": "number"
+        },
+        {
+          "key": "allowedCasualLeaveDays",
+          "label": "Allowed casual leave days",
+          "type": "number"
+        },
+        {
+          "key": "extraLeaveDays",
+          "label": "Extra casual leave days",
+          "type": "number"
+        },
+        {
+          "key": "unpaidLeaveDays",
+          "label": "Unpaid leave days",
+          "type": "number"
+        },
+        {
+          "key": "perDaySalary",
+          "label": "Per day salary",
+          "type": "number"
+        },
+        {
+          "key": "leaveDeduction",
+          "label": "Leave deduction",
+          "type": "number"
+        },
+        {
+          "key": "netSalary",
+          "label": "Net salary",
+          "type": "number"
+        }
+      ],
+      "statuses": [
+        "CALCULATED",
+        "APPROVED",
+        "PAID"
+      ],
+      "rows": []
     }
+
   ]
+
 };

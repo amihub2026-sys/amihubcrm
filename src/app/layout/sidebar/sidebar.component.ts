@@ -11,6 +11,7 @@ export class SidebarComponent{
   private readonly all:UserRole[]=['owner','admin','hr','sales','telecaller','project_manager','developer','designer','video_editor','digital_marketing','accounts','support'];
   readonly items:NavItem[]=[
     {label:'Dashboard',icon:'⌂',route:'/dashboard',roles:this.all},
+    {label:'My Leave',icon:'◷',route:'/my-leave',roles:this.all},
     {label:'Sales',icon:'↗',route:'/sales',roles:['owner','admin','sales','telecaller']},
     {label:'Customers',icon:'♙',route:'/customers',roles:['owner','admin','sales','accounts','project_manager','support']},
     {label:'Projects',icon:'▣',route:'/projects',roles:['owner','admin','hr','project_manager','developer','designer','video_editor']},

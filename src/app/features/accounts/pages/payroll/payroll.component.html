@@ -1,0 +1,49 @@
+<div class="page-heading">
+  <div>
+    <div class="eyebrow">ACCOUNTS / PAYROLL</div>
+    <h1>Payroll</h1>
+    <p>Manage monthly employee salary calculations and payments.</p>
+  </div>
+
+  <button
+    class="primary"
+    (click)="modal = true"
+    *ngIf="canCreate"
+  >
+    ＋ Add record
+  </button>
+</div>
+
+<div class="metric-grid compact">
+  <article class="metric">
+    <span>Total payroll records</span>
+    <strong>{{ rows.length }}</strong>
+    <small>Matching current filters</small>
+  </article>
+
+  <article class="metric">
+    <span>Needs attention</span>
+    <strong>{{ overdue }}</strong>
+    <small>Pending workflow</small>
+  </article>
+
+  <article class="metric">
+    <span>
+      {{ summaryAmount ? 'Tracked value' : 'Workflow stages' }}
+    </span>
+
+    <strong>
+      {{
+        summaryAmount
+          ? ('₹' + summaryAmount.toLocaleString('en-IN'))
+          : tab.statuses.length
+      }}
+    </strong>
+
+    <small>Across these records</small>
+  </article>
+</div>
+
+<app-record-table [vm]="this" />
+
+<app-record-editor [vm]="this" />

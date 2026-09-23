@@ -18,6 +18,14 @@ export const routes: Routes = [
 
       {path:'reminders',loadComponent:()=>import('./features/dashboard/reminders/reminders.component').then(m=>m.RemindersComponent)},
       { path: 'dashboard', loadComponent: () => import('./features/dashboard/dashboard.component').then(m => m.DashboardComponent) },
+      {
+  path: 'my-leave',
+  canActivate: [permissionGuard],
+  data: { resource: 'leave' },
+  loadComponent: () =>
+    import('./features/hr/pages/leave/leave.component')
+      .then(m => m.LeavePageComponent)
+},
       { path: 'sales', canActivate: [roleGuard], data: { module: 'sales', roles: [...management,'sales','telecaller'] }, loadComponent: () => import('./features/sales/sales.component').then(m => m.SalesComponent), loadChildren: () => import('./features/sales/sales.routes').then(m => m.SALES_ROUTES) },
       { path: 'customers', canActivate: [roleGuard], data: { module: 'customers', roles: [...management,'sales','accounts','project_manager','support','digital_marketing'] }, loadComponent: () => import('./features/customers/customers.component').then(m => m.CustomersComponent), loadChildren: () => import('./features/customers/customers.routes').then(m => m.CUSTOMERS_ROUTES) },
       { path: 'projects', canActivate: [roleGuard], data: { module: 'projects', roles: [...management,'hr','project_manager','developer','designer','video_editor'] }, loadComponent: () => import('./features/projects/projects.component').then(m => m.ProjectsComponent), loadChildren: () => import('./features/projects/projects.routes').then(m => m.PROJECTS_ROUTES) },
