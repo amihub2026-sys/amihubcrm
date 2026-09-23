@@ -1,0 +1,35 @@
+<div class="page-heading">
+  <div>
+    <div class="eyebrow">PEOPLE & HR / ATTENDANCE SETTINGS</div>
+    <h1>Attendance Settings</h1>
+    <p>Manage office timings, working days and automatic absence rules.</p>
+  </div>
+
+  <button class="primary" (click)="open()" *ngIf="canCreate">
+    ＋ Add settings
+  </button>
+</div>
+
+<div class="metric-grid compact">
+  <article class="metric">
+    <span>Total settings</span>
+    <strong>{{ rows.length }}</strong>
+    <small>Attendance configuration</small>
+  </article>
+
+  <article class="metric">
+    <span>Office timing</span>
+    <strong>Editable</strong>
+    <small>Managed by Owner / HR</small>
+  </article>
+
+  <article class="metric">
+    <span>Auto absence</span>
+    <strong>Enabled</strong>
+    <small>Uses saved attendance rules</small>
+  </article>
+</div>
+
+<app-record-table [vm]="this" />
+
+<app-record-editor [vm]="this" />

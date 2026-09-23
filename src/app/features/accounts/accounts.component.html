@@ -6,6 +6,8 @@
     <a *ngIf="access.can('expenses')" routerLink="expenses" routerLinkActive="active">Expenses</a>
     <a *ngIf="access.can('promises')" routerLink="promises" routerLinkActive="active">Payment promises</a>
     <a *ngIf="access.can('subscriptions')" routerLink="subscriptions" routerLinkActive="active">Recurring services</a>
+    <a *ngIf="access.can('payroll')" routerLink="payroll" routerLinkActive="active">Payroll</a>
   </nav>
+
   <router-outlet />
 </section>

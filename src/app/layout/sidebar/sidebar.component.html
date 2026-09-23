@@ -1,1 +1,36 @@
-<aside class="sidebar"><a routerLink="/dashboard" class="brand"><div class="brand-mark">A<span></span></div><div><strong>AMI HUB<span class="brand-dot">.</span></strong><span>BUSINESS WORKSPACE</span></div></a><div class="workspace-switch"><span class="company-icon">A</span><div><strong>AMI HUB</strong><small>Madurai, India</small></div><span>⌄</span></div><div class="nav-caption">MAIN WORKSPACE</div><nav>@for(item of visibleItems();track item.route){<a [routerLink]="item.route" routerLinkActive="active" (click)="closeNav()"><span class="nav-icon">{{item.icon}}</span><span>{{item.label}}</span><span class="active-dot"></span></a>}</nav><div class="sidebar-foot"><div class="workspace-help"><span>BUILT FOR YOUR TEAM</span><strong>One connected workspace.</strong><p>From first conversation<br>to lasting relationships.</p></div><div class="sidebar-bottom"><span class="status-dot"></span> Team workspace <small>v2.0</small></div></div></aside>
+<aside class="sidebar">
+  <a routerLink="/dashboard" class="brand"
+    ><div class="brand-mark">A<span></span></div>
+    <div>
+      <strong>AMI HUB<span class="brand-dot">.</span></strong
+      ><span>BUSINESS WORKSPACE</span>
+    </div></a
+  >
+  <div class="workspace-switch">
+    <span class="company-icon">A</span>
+    <div><strong>AMI HUB</strong><small>Madurai, India</small></div>
+    <span>⌄</span>
+  </div>
+  <div class="nav-caption">MAIN WORKSPACE</div>
+  <nav>
+    @for (item of visibleItems(); track item.route) {
+      <a
+        [routerLink]="item.route"
+        routerLinkActive="active"
+        (click)="closeNav()"
+        ><span class="nav-icon">{{ item.icon }}</span
+        ><span>{{ item.label }}</span
+        ><span class="active-dot"></span
+      ></a>
+    }
+  </nav>
+  <div class="sidebar-foot">
+    <div class="workspace-help">
+      <span>BUILT FOR YOUR TEAM</span><strong>One connected workspace.</strong>
+      <p>From first conversation<br />to lasting relationships.</p>
+    </div>
+    <div class="sidebar-bottom">
+      <span class="status-dot"></span> Team workspace <small>v2.0</small>
+    </div>
+  </div>
+</aside>
