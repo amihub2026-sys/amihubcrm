@@ -1,0 +1,1344 @@
+<div class="page-heading">
+  <div>
+    <div class="eyebrow">
+      DIGITAL-MARKETING / META ADS
+    </div>
+
+    <h1>Meta Ads Monitoring</h1>
+
+    <p>
+      Monitor Meta campaigns, spend, leads and performance
+      without changing your ads from the CRM.
+    </p>
+  </div>
+
+  <button
+    type="button"
+    class="secondary"
+    (click)="exportCsv()"
+    [disabled]="!dashboardAccounts.length"
+  >
+    Export CSV
+  </button>
+</div>
+
+
+<!-- =====================================================
+     MESSAGES
+===================================================== -->
+
+<div
+  class="message error-message"
+  *ngIf="errorMessage"
+>
+  {{ errorMessage }}
+</div>
+
+<div
+  class="message success-message"
+  *ngIf="successMessage"
+>
+  {{ successMessage }}
+</div>
+
+
+<!-- =====================================================
+     META NOT CONFIGURED
+===================================================== -->
+
+<div
+  class="info-card warning-card"
+  *ngIf="!bootstrapLoading && !configured"
+>
+  <strong>Meta connection is not configured yet.</strong>
+
+  <p>
+    Meta credentials must be configured only in the backend.
+    Never enter Meta access tokens or app secrets here.
+  </p>
+</div>
+
+
+<!-- =====================================================
+     LINK META ACCOUNT
+     OWNER / ADMIN ONLY
+===================================================== -->
+
+<section
+  class="panel"
+  *ngIf="canManage"
+>
+  <div class="section-heading">
+    <div>
+      <span class="section-kicker">
+        ACCOUNT CONNECTION
+      </span>
+
+      <h2>Link Meta Ad Account</h2>
+
+      <p>
+        Connect an existing CRM customer to an authorized
+        Meta advertising account.
+      </p>
+    </div>
+  </div>
+
+  <div class="form-grid">
+    <div class="field">
+      <label for="metaCustomer">
+        CRM Customer
+      </label>
+
+      <select
+        id="metaCustomer"
+        [(ngModel)]="linkCustomerId"
+      >
+        <option value="">
+          Select customer
+        </option>
+
+        <option
+          *ngFor="let customer of customers"
+          [value]="customer.id"
+        >
+          {{ customer.businessName || customer.id }}
+        </option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="metaAccountId">
+        Meta Ad Account ID
+      </label>
+
+      <input
+        id="metaAccountId"
+        type="text"
+        [(ngModel)]="metaAccountId"
+        placeholder="Example: 123456789012345"
+        autocomplete="off"
+      />
+
+      <small>
+        You can enter the numeric ad account ID.
+      </small>
+    </div>
+
+    <div class="field">
+      <label for="connectionKey">
+        Backend Connection
+      </label>
+
+      <select
+        id="connectionKey"
+        [(ngModel)]="connectionKey"
+      >
+        <option value="">
+          Select connection
+        </option>
+
+        <option
+          *ngFor="let connection of connections"
+          [value]="connection"
+        >
+          {{ connection }}
+        </option>
+      </select>
+    </div>
+
+    <div class="field action-field">
+      <label>&nbsp;</label>
+
+      <button
+        type="button"
+        class="primary"
+        (click)="linkAccount()"
+        [disabled]="
+          linking ||
+          !configured ||
+          !linkCustomerId ||
+          !metaAccountId ||
+          !connectionKey
+        "
+      >
+        {{
+          linking
+            ? 'Connecting...'
+            : 'Link / Reconnect'
+        }}
+      </button>
+    </div>
+  </div>
+
+  <p class="helper-note">
+    Linking an account does not change or pause ads in Meta.
+    Ads continue to be managed from Meta Ads Manager.
+  </p>
+</section>
+
+
+<!-- =====================================================
+     FILTERS
+===================================================== -->
+
+<section class="panel">
+  <div class="section-heading">
+    <div>
+      <span class="section-kicker">
+        REPORT FILTERS
+      </span>
+
+      <h2>Performance Period</h2>
+    </div>
+  </div>
+
+  <div class="filter-grid">
+    <div class="field">
+      <label for="customerFilter">
+        Client
+      </label>
+
+      <select
+        id="customerFilter"
+        [(ngModel)]="selectedCustomerId"
+      >
+        <option value="">
+          All clients
+        </option>
+
+        <option
+          *ngFor="let customer of customers"
+          [value]="customer.id"
+        >
+          {{ customer.businessName || customer.id }}
+        </option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="fromDate">
+        From
+      </label>
+
+      <input
+        id="fromDate"
+        type="date"
+        [(ngModel)]="fromDate"
+      />
+    </div>
+
+    <div class="field">
+      <label for="toDate">
+        To
+      </label>
+
+      <input
+        id="toDate"
+        type="date"
+        [(ngModel)]="toDate"
+      />
+    </div>
+
+    <div class="filter-actions">
+      <button
+        type="button"
+        class="primary"
+        (click)="applyFilters()"
+        [disabled]="dashboardLoading"
+      >
+        {{
+          dashboardLoading
+            ? 'Loading...'
+            : 'Apply'
+        }}
+      </button>
+
+      <button
+        type="button"
+        class="secondary"
+        (click)="clearFilters()"
+        [disabled]="dashboardLoading"
+      >
+        Reset
+      </button>
+    </div>
+  </div>
+</section>
+
+
+<!-- =====================================================
+     LOADING
+===================================================== -->
+
+<div
+  class="loading-box"
+  *ngIf="bootstrapLoading"
+>
+  Loading Meta Ads setup...
+</div>
+
+
+<!-- =====================================================
+     CURRENCY SUMMARY
+===================================================== -->
+
+<ng-container
+  *ngIf="!bootstrapLoading"
+>
+  <section
+    class="currency-section"
+    *ngFor="let summary of currencies"
+  >
+    <div class="currency-heading">
+      <div>
+        <span class="section-kicker">
+          {{ summary.currency }}
+        </span>
+
+        <h2>
+          Performance Summary
+        </h2>
+      </div>
+
+      <div class="account-count">
+        {{ summary.reportedAccounts }}
+        /
+        {{ summary.totalAccounts }}
+        accounts reported
+      </div>
+    </div>
+
+    <div class="metric-grid">
+      <article class="metric">
+        <span>Today Spend</span>
+
+        <strong>
+          {{
+            formatMoney(
+              summary.todaySpend,
+              summary.currency
+            )
+          }}
+        </strong>
+
+        <small>
+          {{ summary.todayReportedAccounts }}
+          account(s) reported
+        </small>
+      </article>
+
+      <article class="metric">
+        <span>Month Spend</span>
+
+        <strong>
+          {{
+            formatMoney(
+              summary.monthSpend,
+              summary.currency
+            )
+          }}
+        </strong>
+
+        <small>
+          Current month
+        </small>
+      </article>
+
+      <article class="metric">
+        <span>Selected Period Spend</span>
+
+        <strong>
+          {{
+            formatMoney(
+              summary.totals?.spend,
+              summary.currency
+            )
+          }}
+        </strong>
+
+        <small>
+          {{ fromDate }} to {{ toDate }}
+        </small>
+      </article>
+
+      <article class="metric">
+        <span>Leads</span>
+
+        <strong>
+          {{
+            formatNumber(
+              summary.totals?.leads
+            )
+          }}
+        </strong>
+
+        <small>
+          Meta reported leads
+        </small>
+      </article>
+
+      <article class="metric">
+        <span>Cost Per Lead</span>
+
+        <strong>
+          {{
+            formatMoney(
+              summary.totals?.cpl,
+              summary.currency
+            )
+          }}
+        </strong>
+
+        <small>
+          CPL
+        </small>
+      </article>
+
+      <article class="metric">
+        <span>Clicks</span>
+
+        <strong>
+          {{
+            formatNumber(
+              summary.totals?.clicks
+            )
+          }}
+        </strong>
+
+        <small>
+          Link / ad clicks
+        </small>
+      </article>
+
+      <article class="metric">
+        <span>Impressions</span>
+
+        <strong>
+          {{
+            formatNumber(
+              summary.totals?.impressions
+            )
+          }}
+        </strong>
+
+        <small>
+          Selected period
+        </small>
+      </article>
+
+      <article class="metric">
+        <span>Reach</span>
+
+        <strong>
+          {{
+            formatNumber(
+              summary.totals?.reach
+            )
+          }}
+        </strong>
+
+        <small>
+          Meta reported reach
+        </small>
+      </article>
+
+      <article class="metric">
+        <span>CTR</span>
+
+        <strong>
+          {{
+            formatPercent(
+              summary.totals?.ctr
+            )
+          }}
+        </strong>
+
+        <small>
+          Click-through rate
+        </small>
+      </article>
+
+      <article class="metric">
+        <span>CPM</span>
+
+        <strong>
+          {{
+            formatMoney(
+              summary.totals?.cpm,
+              summary.currency
+            )
+          }}
+        </strong>
+
+        <small>
+          Cost per 1,000 impressions
+        </small>
+      </article>
+    </div>
+  </section>
+</ng-container>
+
+
+<!-- =====================================================
+     IMPORTANT NOTE
+===================================================== -->
+
+<p class="metric-note">
+  Meta advertising spend is shown separately from CRM revenue,
+  invoices and billing. Different currencies are never combined.
+  Reach is displayed only from Meta's reported totals and is not
+  added across accounts.
+</p>
+
+
+<!-- =====================================================
+     EMPTY STATE
+===================================================== -->
+
+<div
+  class="empty-state"
+  *ngIf="
+    !bootstrapLoading &&
+    !dashboardLoading &&
+    !dashboardAccounts.length
+  "
+>
+  <h3>No Meta ad accounts found</h3>
+
+  <p *ngIf="canManage">
+    Link an authorized Meta ad account to an existing CRM
+    customer to start monitoring.
+  </p>
+
+  <p *ngIf="!canManage">
+    There are no Meta ad accounts assigned to your clients yet.
+  </p>
+</div>
+
+
+<!-- =====================================================
+     ACCOUNT CARDS
+===================================================== -->
+
+<section
+  class="accounts-section"
+  *ngIf="dashboardAccounts.length"
+>
+  <div class="section-heading">
+    <div>
+      <span class="section-kicker">
+        CONNECTED ACCOUNTS
+      </span>
+
+      <h2>Meta Ad Accounts</h2>
+
+      <p>
+        {{ clientCount }}
+        client(s) visible
+      </p>
+    </div>
+  </div>
+
+  <article
+    class="account-card"
+    *ngFor="let account of dashboardAccounts"
+  >
+    <div class="account-top">
+      <div>
+        <div class="account-client">
+          {{
+            account.customerName ||
+            customerName(account.customerId)
+          }}
+        </div>
+
+        <h3>
+          {{
+            account.name ||
+            account.metaAccountId
+          }}
+        </h3>
+
+        <div class="account-meta">
+          <span>
+            {{ account.metaAccountId }}
+          </span>
+
+          <span>
+            {{ account.currency || '—' }}
+          </span>
+
+          <span>
+            {{ account.timezone || '—' }}
+          </span>
+        </div>
+      </div>
+
+      <div class="account-statuses">
+        <span
+          class="status-pill"
+          [ngClass]="statusClass(account.syncState)"
+        >
+          {{ account.syncState }}
+        </span>
+
+        <span
+          class="status-pill"
+          [class.status-success]="account.enabled"
+          [class.status-danger]="!account.enabled"
+        >
+          {{
+            account.enabled
+              ? 'SYNC ENABLED'
+              : 'SYNC PAUSED'
+          }}
+        </span>
+      </div>
+    </div>
+
+
+    <!-- ACCOUNT METRICS -->
+
+    <div class="account-metrics">
+      <div class="small-metric">
+        <span>Today</span>
+
+        <strong>
+          {{
+            formatMoney(
+              account.todaySpend,
+              account.currency
+            )
+          }}
+        </strong>
+      </div>
+
+      <div class="small-metric">
+        <span>This Month</span>
+
+        <strong>
+          {{
+            formatMoney(
+              account.monthSpend,
+              account.currency
+            )
+          }}
+        </strong>
+      </div>
+
+      <div class="small-metric">
+        <span>Selected Spend</span>
+
+        <strong>
+          {{
+            formatMoney(
+              account.report?.totals?.spend,
+              account.currency
+            )
+          }}
+        </strong>
+      </div>
+
+      <div class="small-metric">
+        <span>Leads</span>
+
+        <strong>
+          {{
+            formatNumber(
+              account.report?.totals?.leads
+            )
+          }}
+        </strong>
+      </div>
+
+      <div class="small-metric">
+        <span>CPL</span>
+
+        <strong>
+          {{
+            formatMoney(
+              account.report?.totals?.cpl,
+              account.currency
+            )
+          }}
+        </strong>
+      </div>
+
+      <div class="small-metric">
+        <span>Active Campaigns</span>
+
+        <strong>
+          {{
+            formatNumber(
+              account.activeCampaigns
+            )
+          }}
+        </strong>
+      </div>
+    </div>
+
+
+    <!-- ACCOUNT ACTIONS -->
+
+    <div class="account-footer">
+      <div class="sync-time">
+        Last sync:
+        <strong>
+          {{
+            formatDateTime(
+              account.report?.syncedAt ||
+              account.lastSyncedAt
+            )
+          }}
+        </strong>
+      </div>
+
+      <div class="account-actions">
+        <button
+          type="button"
+          class="secondary"
+          (click)="openDetail(account)"
+        >
+          View Details
+        </button>
+
+        <button
+          type="button"
+          class="secondary"
+          (click)="syncAccount(account)"
+          [disabled]="
+            syncingAccountId === account.id ||
+            !account.enabled
+          "
+        >
+          {{
+            syncingAccountId === account.id
+              ? 'Syncing...'
+              : 'Sync Now'
+          }}
+        </button>
+
+        <button
+          *ngIf="canManage"
+          type="button"
+          class="secondary"
+          (click)="toggleAccount(account)"
+          [disabled]="updatingAccountId === account.id"
+        >
+          {{
+            updatingAccountId === account.id
+              ? 'Updating...'
+              : account.enabled
+                ? 'Pause CRM Sync'
+                : 'Resume CRM Sync'
+          }}
+        </button>
+      </div>
+    </div>
+
+
+    <!-- SYNC ERROR -->
+
+    <div
+      class="account-error"
+      *ngIf="account.syncError"
+    >
+      {{ account.syncError }}
+    </div>
+
+
+    <!-- CAMPAIGNS -->
+
+    <div
+      class="campaign-preview"
+      *ngIf="getAccountCampaigns(account).length"
+    >
+      <h4>Campaigns</h4>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Campaign</th>
+              <th>Status</th>
+              <th>Objective</th>
+              <th>Daily Budget</th>
+              <th>Lifetime Budget</th>
+              <th>Spend</th>
+              <th>Leads</th>
+              <th>CPL</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr
+              *ngFor="
+                let campaign
+                of getAccountCampaigns(account)
+              "
+            >
+              <td>
+                <strong>
+                  {{ campaign.name }}
+                </strong>
+              </td>
+
+              <td>
+                <span
+                  class="status-pill"
+                  [ngClass]="
+                    statusClass(
+                      campaign.effectiveStatus
+                    )
+                  "
+                >
+                  {{
+                    campaign.effectiveStatus ||
+                    'UNKNOWN'
+                  }}
+                </span>
+              </td>
+
+              <td>
+                {{
+                  campaign.objective ||
+                  '—'
+                }}
+              </td>
+
+              <td>
+                {{
+                  formatBudget(
+                    campaign.dailyBudgetMinor,
+                    account.currency
+                  )
+                }}
+              </td>
+
+              <td>
+                {{
+                  formatBudget(
+                    campaign.lifetimeBudgetMinor,
+                    account.currency
+                  )
+                }}
+              </td>
+
+              <td>
+                {{
+                  formatMoney(
+                    campaign.metrics?.spend,
+                    account.currency
+                  )
+                }}
+              </td>
+
+              <td>
+                {{
+                  formatNumber(
+                    campaign.metrics?.leads
+                  )
+                }}
+              </td>
+
+              <td>
+                {{
+                  formatMoney(
+                    campaign.metrics?.cpl,
+                    account.currency
+                  )
+                }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </article>
+</section>
+
+
+<!-- =====================================================
+     DETAIL PANEL
+===================================================== -->
+
+<div
+  class="detail-overlay"
+  *ngIf="selectedAccount"
+  (click)="closeDetail()"
+>
+  <section
+    class="detail-panel"
+    (click)="$event.stopPropagation()"
+  >
+    <div class="detail-header">
+      <div>
+        <span class="section-kicker">
+          META ACCOUNT DETAILS
+        </span>
+
+        <h2>
+          {{
+            selectedAccount.name ||
+            selectedAccount.metaAccountId
+          }}
+        </h2>
+
+        <p>
+          {{ detailCurrency || '—' }}
+          ·
+          {{ detailTimezone || '—' }}
+        </p>
+      </div>
+
+      <button
+        type="button"
+        class="close-button"
+        (click)="closeDetail()"
+        aria-label="Close"
+      >
+        ×
+      </button>
+    </div>
+
+
+    <!-- DETAIL TABS -->
+
+    <div class="detail-tabs">
+      <button
+        type="button"
+        [class.active]="
+          selectedDetailTab === 'campaigns'
+        "
+        (click)="selectedDetailTab = 'campaigns'"
+      >
+        Campaigns
+        ({{ campaignEntities.length }})
+      </button>
+
+      <button
+        type="button"
+        [class.active]="
+          selectedDetailTab === 'adsets'
+        "
+        (click)="selectedDetailTab = 'adsets'"
+      >
+        Ad Sets
+        ({{ adSetEntities.length }})
+      </button>
+
+      <button
+        type="button"
+        [class.active]="
+          selectedDetailTab === 'ads'
+        "
+        (click)="selectedDetailTab = 'ads'"
+      >
+        Ads
+        ({{ adEntities.length }})
+      </button>
+
+      <button
+        type="button"
+        [class.active]="
+          selectedDetailTab === 'daily'
+        "
+        (click)="selectedDetailTab = 'daily'"
+      >
+        Daily Spend
+        ({{ daily.length }})
+      </button>
+    </div>
+
+
+    <div
+      class="loading-box"
+      *ngIf="detailLoading"
+    >
+      Loading account details...
+    </div>
+
+
+    <!-- CAMPAIGN ENTITIES -->
+
+    <div
+      class="table-wrap"
+      *ngIf="
+        !detailLoading &&
+        selectedDetailTab === 'campaigns'
+      "
+    >
+      <table>
+        <thead>
+          <tr>
+            <th>Campaign</th>
+            <th>Status</th>
+            <th>Objective</th>
+            <th>Daily Budget</th>
+            <th>Lifetime Budget</th>
+            <th>Start</th>
+            <th>End</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr
+            *ngFor="let entity of campaignEntities"
+          >
+            <td>
+              <strong>
+                {{ entity.name || entity.metaId }}
+              </strong>
+            </td>
+
+            <td>
+              <span
+                class="status-pill"
+                [ngClass]="
+                  statusClass(
+                    entity.effectiveStatus
+                  )
+                "
+              >
+                {{
+                  entity.effectiveStatus ||
+                  entity.status ||
+                  'UNKNOWN'
+                }}
+              </span>
+            </td>
+
+            <td>
+              {{ entity.objective || '—' }}
+            </td>
+
+            <td>
+              {{
+                formatBudget(
+                  entity.dailyBudgetMinor,
+                  detailCurrency
+                )
+              }}
+            </td>
+
+            <td>
+              {{
+                formatBudget(
+                  entity.lifetimeBudgetMinor,
+                  detailCurrency
+                )
+              }}
+            </td>
+
+            <td>
+              {{
+                formatDate(
+                  entity.startTime
+                )
+              }}
+            </td>
+
+            <td>
+              {{
+                formatDate(
+                  entity.stopTime
+                )
+              }}
+            </td>
+          </tr>
+
+          <tr *ngIf="!campaignEntities.length">
+            <td
+              colspan="7"
+              class="empty-table"
+            >
+              No campaigns available.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+
+    <!-- AD SETS -->
+
+    <div
+      class="table-wrap"
+      *ngIf="
+        !detailLoading &&
+        selectedDetailTab === 'adsets'
+      "
+    >
+      <table>
+        <thead>
+          <tr>
+            <th>Ad Set</th>
+            <th>Campaign</th>
+            <th>Status</th>
+            <th>Optimization</th>
+            <th>Daily Budget</th>
+            <th>Targeting</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr
+            *ngFor="let entity of adSetEntities"
+          >
+            <td>
+              <strong>
+                {{ entity.name || entity.metaId }}
+              </strong>
+            </td>
+
+            <td>
+              {{
+                campaignName(
+                  entity.campaignId
+                )
+              }}
+            </td>
+
+            <td>
+              <span
+                class="status-pill"
+                [ngClass]="
+                  statusClass(
+                    entity.effectiveStatus
+                  )
+                "
+              >
+                {{
+                  entity.effectiveStatus ||
+                  entity.status ||
+                  'UNKNOWN'
+                }}
+              </span>
+            </td>
+
+            <td>
+              {{
+                entity.optimizationGoal ||
+                '—'
+              }}
+            </td>
+
+            <td>
+              {{
+                formatBudget(
+                  entity.dailyBudgetMinor,
+                  detailCurrency
+                )
+              }}
+            </td>
+
+            <td>
+              {{
+                entity.targetingSummary ||
+                '—'
+              }}
+            </td>
+          </tr>
+
+          <tr *ngIf="!adSetEntities.length">
+            <td
+              colspan="6"
+              class="empty-table"
+            >
+              No ad sets available.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+
+    <!-- ADS -->
+
+    <div
+      class="table-wrap"
+      *ngIf="
+        !detailLoading &&
+        selectedDetailTab === 'ads'
+      "
+    >
+      <table>
+        <thead>
+          <tr>
+            <th>Ad</th>
+            <th>Campaign</th>
+            <th>Ad Set</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr
+            *ngFor="let entity of adEntities"
+          >
+            <td>
+              <strong>
+                {{ entity.name || entity.metaId }}
+              </strong>
+            </td>
+
+            <td>
+              {{
+                campaignName(
+                  entity.campaignId
+                )
+              }}
+            </td>
+
+            <td>
+              {{
+                adSetName(
+                  entity.adsetId
+                )
+              }}
+            </td>
+
+            <td>
+              <span
+                class="status-pill"
+                [ngClass]="
+                  statusClass(
+                    entity.effectiveStatus
+                  )
+                "
+              >
+                {{
+                  entity.effectiveStatus ||
+                  entity.status ||
+                  'UNKNOWN'
+                }}
+              </span>
+            </td>
+          </tr>
+
+          <tr *ngIf="!adEntities.length">
+            <td
+              colspan="4"
+              class="empty-table"
+            >
+              No ads available.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+
+    <!-- DAILY INSIGHTS -->
+
+    <div
+      class="table-wrap"
+      *ngIf="
+        !detailLoading &&
+        selectedDetailTab === 'daily'
+      "
+    >
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Spend</th>
+            <th>Leads</th>
+            <th>CPL</th>
+            <th>Clicks</th>
+            <th>Impressions</th>
+            <th>Reach</th>
+            <th>CTR</th>
+            <th>CPM</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr
+            *ngFor="let row of daily"
+          >
+            <td>
+              {{ row.date }}
+            </td>
+
+            <td>
+              {{
+                formatMoney(
+                  row.spend,
+                  detailCurrency
+                )
+              }}
+            </td>
+
+            <td>
+              {{
+                formatNumber(
+                  row.leads
+                )
+              }}
+            </td>
+
+            <td>
+              {{
+                formatMoney(
+                  row.cpl,
+                  detailCurrency
+                )
+              }}
+            </td>
+
+            <td>
+              {{
+                formatNumber(
+                  row.clicks
+                )
+              }}
+            </td>
+
+            <td>
+              {{
+                formatNumber(
+                  row.impressions
+                )
+              }}
+            </td>
+
+            <td>
+              {{
+                formatNumber(
+                  row.reach
+                )
+              }}
+            </td>
+
+            <td>
+              {{
+                formatPercent(
+                  row.ctr
+                )
+              }}
+            </td>
+
+            <td>
+              {{
+                formatMoney(
+                  row.cpm,
+                  detailCurrency
+                )
+              }}
+            </td>
+          </tr>
+
+          <tr *ngIf="!daily.length">
+            <td
+              colspan="9"
+              class="empty-table"
+            >
+              No daily insights are available for this period.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
