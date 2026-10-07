@@ -1,0 +1,1691 @@
+<div class="page-heading">
+
+  <div>
+
+    <div class="eyebrow">
+      DIGITAL MARKETING / META ADS RUNNING
+    </div>
+
+    <h1>
+      Meta Ads Running
+    </h1>
+
+    <p>
+      View active Meta campaigns and create new Meta ads for linked customers.
+    </p>
+
+  </div>
+
+
+  <button
+    *ngIf="canManage"
+    type="button"
+    class="primary"
+    (click)="openCreateCampaign()"
+  >
+    ＋ Create Meta Ad
+  </button>
+
+</div>
+
+
+<!-- =====================================================
+     LOADING
+===================================================== -->
+
+<div
+  class="loading-state"
+  *ngIf="loading"
+>
+  Loading Meta Ads data...
+</div>
+
+
+<!-- =====================================================
+     LOAD ERROR
+===================================================== -->
+
+<div
+  class="error-message"
+  *ngIf="loadError"
+>
+  {{ loadError }}
+</div>
+
+
+<!-- =====================================================
+     SUMMARY
+===================================================== -->
+
+<div
+  class="meta-summary"
+  *ngIf="!loading"
+>
+
+  <article class="summary-card">
+
+    <span>
+      Running Customers
+    </span>
+
+    <strong>
+      {{ runningCount }}
+    </strong>
+
+    <small>
+      Customers with active campaigns
+    </small>
+
+  </article>
+
+
+  <article class="summary-card">
+
+    <span>
+      Active Campaigns
+    </span>
+
+    <strong>
+      {{ totalActiveCampaigns }}
+    </strong>
+
+    <small>
+      Campaigns currently active
+    </small>
+
+  </article>
+
+
+  <article class="summary-card">
+
+    <span>
+      Today's Spend
+    </span>
+
+    <strong>
+      ₹{{ totalTodaySpend | number:'1.0-2' }}
+    </strong>
+
+    <small>
+      Total Meta spend today
+    </small>
+
+  </article>
+
+</div>
+
+
+<!-- =====================================================
+     META ACCOUNTS
+===================================================== -->
+
+<section
+  class="running-section"
+  *ngIf="!loading"
+>
+
+  <div class="section-heading">
+
+    <div>
+
+      <h2>
+        Customer Meta Accounts
+      </h2>
+
+      <p>
+        Linked Meta ad accounts and their current campaign activity.
+      </p>
+
+    </div>
+
+  </div>
+
+
+  <!-- ===================================================
+       TABLE
+  ==================================================== -->
+
+  <div
+    class="running-table"
+    *ngIf="runningAccounts.length"
+  >
+
+    <div class="table-head">
+
+      <div>
+        Customer
+      </div>
+
+      <div>
+        Meta Ad Account
+      </div>
+
+      <div>
+        Active Campaigns
+      </div>
+
+      <div>
+        Today Spend
+      </div>
+
+      <div>
+        Status
+      </div>
+
+    </div>
+
+
+    <div
+      class="table-row"
+      *ngFor="let account of runningAccounts"
+    >
+
+      <!-- CUSTOMER -->
+
+      <div class="customer-cell">
+
+        <strong>
+          {{ accountCustomerName(account) }}
+        </strong>
+
+      </div>
+
+
+      <!-- META ACCOUNT -->
+
+      <div>
+
+        <strong>
+          {{ account.name || 'Meta Account' }}
+        </strong>
+
+        <small>
+          {{ account.metaAccountId }}
+        </small>
+
+      </div>
+
+
+      <!-- ACTIVE CAMPAIGNS -->
+
+      <div>
+        {{ account.activeCampaigns || 0 }}
+      </div>
+
+
+      <!-- TODAY SPEND -->
+
+      <div>
+        ₹{{ (account.todaySpend || 0) | number:'1.0-2' }}
+      </div>
+
+
+      <!-- STATUS -->
+
+      <div>
+
+        <span
+          class="status-badge running"
+          *ngIf="(account.activeCampaigns || 0) > 0"
+        >
+          ● Running
+        </span>
+
+
+        <span
+          class="status-badge stopped"
+          *ngIf="!(account.activeCampaigns || 0)"
+        >
+          ● No Active Ads
+        </span>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- ===================================================
+       EMPTY STATE
+  ==================================================== -->
+
+  <div
+    class="empty-state"
+    *ngIf="!runningAccounts.length"
+  >
+
+    <div class="empty-icon">
+      M
+    </div>
+
+    <h3>
+      No Meta accounts found
+    </h3>
+
+    <p>
+      Link a customer's Meta ad account before creating ads.
+    </p>
+
+  </div>
+
+</section>
+
+
+<!-- =====================================================
+     CREATE META AD MODAL
+===================================================== -->
+
+<div
+  class="campaign-modal-backdrop"
+  *ngIf="showCreateForm"
+>
+
+  <section class="campaign-modal">
+
+
+    <!-- =================================================
+         HEADER
+    ================================================== -->
+
+    <div class="campaign-modal-header">
+
+      <div>
+
+        <div class="eyebrow">
+          META ADS
+        </div>
+
+
+        <h2
+          *ngIf="createStep === 'CAMPAIGN'"
+        >
+          Create Meta Campaign
+        </h2>
+
+
+        <h2
+          *ngIf="createStep === 'ADSET'"
+        >
+          Configure Audience &amp; Budget
+        </h2>
+
+
+        <h2
+          *ngIf="createStep === 'CREATIVE'"
+        >
+          Configure Ad Creative
+        </h2>
+
+
+        <p
+          *ngIf="createStep === 'CAMPAIGN'"
+        >
+          Step 1 of 3 — Create the Meta campaign.
+        </p>
+
+
+        <p
+          *ngIf="createStep === 'ADSET'"
+        >
+          Step 2 of 3 — Configure the audience and budget.
+        </p>
+
+
+        <p
+          *ngIf="createStep === 'CREATIVE'"
+        >
+          Step 3 of 3 — Select the Facebook Page, Instagram account and ad content.
+        </p>
+
+      </div>
+
+
+      <button
+        type="button"
+        class="close-btn"
+        (click)="closeCreateCampaign()"
+        [disabled]="submitting"
+      >
+        ×
+      </button>
+
+    </div>
+
+
+    <!-- =================================================
+         STEP INDICATOR
+    ================================================== -->
+
+    <div class="meta-create-steps">
+
+
+      <!-- STEP 1 -->
+
+      <div
+        class="meta-create-step"
+        [class.active]="createStep === 'CAMPAIGN'"
+        [class.completed]="
+          createStep === 'ADSET' ||
+          createStep === 'CREATIVE'
+        "
+      >
+
+        <span class="step-number">
+          1
+        </span>
+
+        <div>
+
+          <strong>
+            Campaign
+          </strong>
+
+          <small>
+            Account &amp; objective
+          </small>
+
+        </div>
+
+      </div>
+
+
+      <div class="step-line"></div>
+
+
+      <!-- STEP 2 -->
+
+      <div
+        class="meta-create-step"
+        [class.active]="createStep === 'ADSET'"
+        [class.completed]="createStep === 'CREATIVE'"
+      >
+
+        <span class="step-number">
+          2
+        </span>
+
+        <div>
+
+          <strong>
+            Audience
+          </strong>
+
+          <small>
+            Budget &amp; targeting
+          </small>
+
+        </div>
+
+      </div>
+
+
+      <div class="step-line"></div>
+
+
+      <!-- STEP 3 -->
+
+      <div
+        class="meta-create-step"
+        [class.active]="createStep === 'CREATIVE'"
+      >
+
+        <span class="step-number">
+          3
+        </span>
+
+        <div>
+
+          <strong>
+            Creative
+          </strong>
+
+          <small>
+            Page, Instagram &amp; content
+          </small>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- =================================================
+         STEP 1
+         CREATE CAMPAIGN
+    ================================================== -->
+
+    <form
+      *ngIf="createStep === 'CAMPAIGN'"
+      class="campaign-form"
+      (ngSubmit)="createCampaign()"
+    >
+
+
+      <!-- META ACCOUNT -->
+
+      <label>
+
+        Customer / Meta Ad Account *
+
+        <select
+          name="selectedAccountId"
+          [(ngModel)]="selectedAccountId"
+          [disabled]="submitting"
+          required
+        >
+
+          <option value="">
+            Select customer
+          </option>
+
+
+          <option
+            *ngFor="let account of runningAccounts"
+            [value]="account.id"
+          >
+            {{ accountCustomerName(account) }}
+            —
+            {{ account.name || account.metaAccountId }}
+          </option>
+
+        </select>
+
+      </label>
+
+
+      <!-- CAMPAIGN NAME -->
+
+      <label>
+
+        Campaign Name *
+
+        <input
+          type="text"
+          name="campaignName"
+          [(ngModel)]="campaignName"
+          placeholder="Example: AMI HUB October Leads"
+          maxlength="200"
+          [disabled]="submitting"
+          required
+        >
+
+      </label>
+
+
+      <!-- OBJECTIVE -->
+
+      <label>
+
+        Campaign Objective *
+
+        <select
+          name="objective"
+          [(ngModel)]="objective"
+          [disabled]="submitting"
+          required
+        >
+
+          <option
+            *ngFor="let item of objectives"
+            [ngValue]="item.value"
+          >
+            {{ item.label }}
+          </option>
+
+        </select>
+
+      </label>
+
+
+      <!-- SAFE NOTE -->
+
+      <div class="campaign-note">
+
+        <strong>
+          Safe creation
+        </strong>
+
+        <p>
+          The campaign will first be created in Meta with
+          <strong>PAUSED</strong>
+          status. It will not start spending money.
+        </p>
+
+      </div>
+
+
+      <!-- ERROR -->
+
+      <div
+        class="form-error"
+        *ngIf="createError"
+      >
+        {{ createError }}
+      </div>
+
+
+      <!-- SUCCESS -->
+
+      <div
+        class="form-success"
+        *ngIf="createSuccess"
+      >
+        {{ createSuccess }}
+      </div>
+
+
+      <!-- ACTIONS -->
+
+      <div class="campaign-form-actions">
+
+        <button
+          type="button"
+          class="secondary-btn"
+          (click)="closeCreateCampaign()"
+          [disabled]="submitting"
+        >
+          Cancel
+        </button>
+
+
+        <button
+          type="submit"
+          class="primary"
+          [disabled]="submitting"
+        >
+
+          {{
+            submitting
+              ? 'Creating Campaign...'
+              : 'Create Campaign & Continue'
+          }}
+
+        </button>
+
+      </div>
+
+    </form>
+
+
+    <!-- =================================================
+         STEP 2
+         CREATE AD SET / AUDIENCE
+    ================================================== -->
+
+    <form
+      *ngIf="createStep === 'ADSET'"
+      class="campaign-form adset-form"
+      (ngSubmit)="createAdSet()"
+    >
+
+
+      <!-- CREATED CAMPAIGN -->
+
+      <div class="created-campaign-box">
+
+        <div>
+
+          <small>
+            CAMPAIGN CREATED
+          </small>
+
+          <strong>
+            {{ createdCampaignName }}
+          </strong>
+
+        </div>
+
+
+        <span class="paused-badge">
+          PAUSED
+        </span>
+
+      </div>
+
+
+      <!-- AD SET NAME -->
+
+      <label>
+
+        Ad Set Name *
+
+        <input
+          type="text"
+          name="adSetName"
+          [(ngModel)]="adSetName"
+          placeholder="Example: Madurai Leads - Ad Set 1"
+          maxlength="200"
+          [disabled]="submitting"
+          required
+        >
+
+      </label>
+
+
+      <!-- DAILY BUDGET -->
+
+      <label>
+
+        Daily Budget (₹) *
+
+        <input
+          type="number"
+          name="dailyBudget"
+          [(ngModel)]="dailyBudget"
+          placeholder="Example: 200"
+          min="1"
+          step="1"
+          [disabled]="submitting"
+          required
+        >
+
+        <small class="field-help">
+          Example: Enter 200 for ₹200 per day.
+        </small>
+
+      </label>
+
+
+      <!-- LOCATION -->
+
+      <div class="location-field">
+
+        <label>
+
+          Target Location *
+
+          <div class="location-search-row">
+
+            <input
+              type="text"
+              name="locationQuery"
+              [(ngModel)]="locationQuery"
+              placeholder="Search Madurai"
+              autocomplete="off"
+              [disabled]="submitting || searchingLocations"
+            >
+
+
+            <button
+              type="button"
+              class="secondary-btn location-search-btn"
+              (click)="searchLocation()"
+              [disabled]="
+                submitting ||
+                searchingLocations
+              "
+            >
+
+              {{
+                searchingLocations
+                  ? 'Searching...'
+                  : 'Search'
+              }}
+
+            </button>
+
+          </div>
+
+        </label>
+
+
+        <!-- LOCATION ERROR -->
+
+        <div
+          class="location-search-error"
+          *ngIf="locationSearchError"
+        >
+          {{ locationSearchError }}
+        </div>
+
+
+        <!-- LOCATION RESULTS -->
+
+        <div
+          class="location-results"
+          *ngIf="locations.length"
+        >
+
+          <button
+            type="button"
+            class="location-result"
+            *ngFor="let location of locations"
+            (click)="selectLocation(location)"
+          >
+
+            <span>
+
+              <strong>
+                {{ location.name }}
+              </strong>
+
+              <small>
+
+                {{
+                  location.region
+                    ? location.region + ', '
+                    : ''
+                }}
+
+                {{ location.countryName }}
+
+              </small>
+
+            </span>
+
+
+            <span class="select-location-text">
+              Select
+            </span>
+
+          </button>
+
+        </div>
+
+
+        <!-- SELECTED LOCATION -->
+
+        <div
+          class="selected-location"
+          *ngIf="selectedLocationKey"
+        >
+
+          <div>
+
+            <small>
+              TARGET LOCATION
+            </small>
+
+            <strong>
+              {{ selectedLocationName }}
+            </strong>
+
+          </div>
+
+
+          <span>
+            ✓ Selected
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <!-- AGE -->
+
+      <div class="form-grid two-columns">
+
+        <label>
+
+          Minimum Age *
+
+          <input
+            type="number"
+            name="ageMin"
+            [(ngModel)]="ageMin"
+            min="18"
+            max="65"
+            [disabled]="submitting"
+            required
+          >
+
+        </label>
+
+
+        <label>
+
+          Maximum Age *
+
+          <input
+            type="number"
+            name="ageMax"
+            [(ngModel)]="ageMax"
+            min="18"
+            max="65"
+            [disabled]="submitting"
+            required
+          >
+
+        </label>
+
+      </div>
+
+
+      <!-- GENDER -->
+
+      <label>
+
+        Gender *
+
+        <select
+          name="gender"
+          [(ngModel)]="gender"
+          [disabled]="submitting"
+          required
+        >
+
+          <option
+            *ngFor="let item of genders"
+            [ngValue]="item.value"
+          >
+            {{ item.label }}
+          </option>
+
+        </select>
+
+      </label>
+
+
+      <!-- DATES -->
+
+      <div class="form-grid two-columns">
+
+        <label>
+
+          Start Date &amp; Time *
+
+          <input
+            type="datetime-local"
+            name="startTime"
+            [(ngModel)]="startTime"
+            [disabled]="submitting"
+            required
+          >
+
+        </label>
+
+
+        <label>
+
+          End Date &amp; Time *
+
+          <input
+            type="datetime-local"
+            name="endTime"
+            [(ngModel)]="endTime"
+            [disabled]="submitting"
+            required
+          >
+
+        </label>
+
+      </div>
+
+
+      <!-- SETTINGS -->
+
+      <div class="adset-settings-summary">
+
+        <div>
+
+          <span>
+            Objective
+          </span>
+
+          <strong>
+
+            {{
+              objective === 'OUTCOME_LEADS'
+                ? 'Leads'
+                : objective === 'OUTCOME_ENGAGEMENT'
+                  ? 'Engagement / Messages'
+                  : objective === 'OUTCOME_TRAFFIC'
+                    ? 'Traffic'
+                    : objective === 'OUTCOME_AWARENESS'
+                      ? 'Awareness'
+                      : objective === 'OUTCOME_SALES'
+                        ? 'Sales'
+                        : 'App Promotion'
+            }}
+
+          </strong>
+
+        </div>
+
+
+        <div>
+
+          <span>
+            Optimization
+          </span>
+
+          <strong>
+            {{ optimizationGoal }}
+          </strong>
+
+        </div>
+
+
+        <div>
+
+          <span>
+            Billing
+          </span>
+
+          <strong>
+            {{ billingEvent }}
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <!-- SAFE NOTE -->
+
+      <div class="campaign-note">
+
+        <strong>
+          Safe creation
+        </strong>
+
+        <p>
+          This Ad Set will also be created as
+          <strong>PAUSED</strong>.
+          Creating it will not activate the campaign.
+        </p>
+
+      </div>
+
+
+      <!-- ERROR -->
+
+      <div
+        class="form-error"
+        *ngIf="createError"
+      >
+        {{ createError }}
+      </div>
+
+
+      <!-- SUCCESS -->
+
+      <div
+        class="form-success"
+        *ngIf="createSuccess"
+      >
+        {{ createSuccess }}
+      </div>
+
+
+      <!-- ACTIONS -->
+
+      <div class="campaign-form-actions">
+
+        <button
+          type="button"
+          class="secondary-btn"
+          (click)="closeCreateCampaign()"
+          [disabled]="submitting"
+        >
+          Close
+        </button>
+
+
+        <button
+          type="submit"
+          class="primary"
+          [disabled]="submitting"
+        >
+
+          {{
+            submitting
+              ? 'Creating Audience...'
+              : 'Create Audience & Continue'
+          }}
+
+        </button>
+
+      </div>
+
+    </form>
+
+
+   <!-- =================================================
+     STEP 3
+     CREATIVE / FINAL META AD
+================================================== -->
+
+<form
+  *ngIf="createStep === 'CREATIVE'"
+  class="campaign-form creative-form"
+  (ngSubmit)="createImageAd()"
+>
+
+
+  <!-- =================================================
+       CAMPAIGN
+  ================================================== -->
+
+  <div class="created-campaign-box">
+
+    <div>
+
+      <small>
+        CAMPAIGN
+      </small>
+
+      <strong>
+        {{ createdCampaignName }}
+      </strong>
+
+    </div>
+
+    <span class="paused-badge">
+      PAUSED
+    </span>
+
+  </div>
+
+
+  <!-- =================================================
+       AD SET
+  ================================================== -->
+
+  <div class="created-campaign-box">
+
+    <div>
+
+      <small>
+        AUDIENCE / AD SET
+      </small>
+
+      <strong>
+        {{ createdAdSetName }}
+      </strong>
+
+    </div>
+
+    <span class="paused-badge">
+      PAUSED
+    </span>
+
+  </div>
+
+
+  <!-- =================================================
+       LOAD FACEBOOK / INSTAGRAM
+  ================================================== -->
+
+  <div
+    class="loading-state"
+    *ngIf="loadingCreativeAssets"
+  >
+    Loading Facebook Page and Instagram accounts from Meta...
+  </div>
+
+
+  <!-- =================================================
+       CREATIVE ASSET ERROR
+  ================================================== -->
+
+  <div
+    class="form-error"
+    *ngIf="creativeAssetsError"
+  >
+    {{ creativeAssetsError }}
+  </div>
+
+
+  <!-- =================================================
+       FACEBOOK PAGE
+  ================================================== -->
+
+  <label>
+
+    Facebook Page *
+
+    <select
+      name="selectedPageId"
+      [(ngModel)]="selectedPageId"
+      [disabled]="
+        loadingCreativeAssets ||
+        submitting ||
+        !!createdAdId
+      "
+      required
+    >
+
+      <option value="">
+        Select Facebook Page
+      </option>
+
+      <option
+        *ngFor="let page of facebookPages"
+        [value]="page.id"
+      >
+        {{ page.name }}
+      </option>
+
+    </select>
+
+  </label>
+
+
+  <!-- SELECTED FACEBOOK PAGE -->
+
+  <div
+    class="selected-location"
+    *ngIf="selectedPageId"
+  >
+
+    <div>
+
+      <small>
+        FACEBOOK PAGE
+      </small>
+
+      <strong>
+        {{ selectedFacebookPageName() }}
+      </strong>
+
+    </div>
+
+    <span>
+      ✓ Selected
+    </span>
+
+  </div>
+
+
+  <!-- =================================================
+       INSTAGRAM ACCOUNT
+  ================================================== -->
+
+  <label>
+
+    Instagram Account
+
+    <select
+      name="selectedInstagramAccountId"
+      [(ngModel)]="selectedInstagramAccountId"
+      [disabled]="
+        loadingCreativeAssets ||
+        submitting ||
+        !!createdAdId
+      "
+    >
+
+      <option value="">
+        No Instagram account
+      </option>
+
+      <option
+        *ngFor="let instagram of instagramAccounts"
+        [value]="instagram.id"
+      >
+        {{
+          instagram.username
+            ? '@' + instagram.username
+            : instagram.name || instagram.id
+        }}
+      </option>
+
+    </select>
+
+  </label>
+
+
+  <!-- SELECTED INSTAGRAM -->
+
+  <div
+    class="selected-location"
+    *ngIf="selectedInstagramAccountId"
+  >
+
+    <div>
+
+      <small>
+        INSTAGRAM ACCOUNT
+      </small>
+
+      <strong>
+        {{ selectedInstagramName() }}
+      </strong>
+
+    </div>
+
+    <span>
+      ✓ Selected
+    </span>
+
+  </div>
+
+
+  <!-- =================================================
+       RELOAD META ASSETS
+  ================================================== -->
+
+  <div
+    class="campaign-form-actions"
+    *ngIf="!createdAdId"
+  >
+
+    <button
+      type="button"
+      class="secondary-btn"
+      (click)="loadCreativeAssets()"
+      [disabled]="
+        loadingCreativeAssets ||
+        submitting
+      "
+    >
+
+      {{
+        loadingCreativeAssets
+          ? 'Loading...'
+          : 'Reload Meta Assets'
+      }}
+
+    </button>
+
+  </div>
+
+
+  <!-- =================================================
+       AD NAME
+  ================================================== -->
+
+  <label>
+
+    Ad Name *
+
+    <input
+      type="text"
+      name="creativeName"
+      [(ngModel)]="creativeName"
+      maxlength="200"
+      placeholder="Example: AMI HUB Leads - Ad 1"
+      [disabled]="submitting || !!createdAdId"
+      required
+    >
+
+  </label>
+
+
+  <!-- =================================================
+       MEDIA TYPE
+  ================================================== -->
+
+  <label>
+
+    Media Type *
+
+    <select
+      name="creativeMediaType"
+      [(ngModel)]="creativeMediaType"
+      [disabled]="submitting || !!createdAdId"
+    >
+
+      <option value="IMAGE">
+        Image
+      </option>
+
+      <option value="VIDEO">
+        Video
+      </option>
+
+    </select>
+
+  </label>
+
+
+  <!-- =================================================
+       IMAGE URL
+  ================================================== -->
+
+  <label
+    *ngIf="creativeMediaType === 'IMAGE'"
+  >
+
+    Image URL *
+
+    <input
+      type="url"
+      name="imageUrl"
+      [(ngModel)]="imageUrl"
+      placeholder="https://yourwebsite.com/images/meta-ad.jpg"
+      [disabled]="submitting || !!createdAdId"
+      required
+    >
+
+    <small class="field-help">
+      Enter a public HTTPS image URL. Meta must be able to access this image.
+    </small>
+
+  </label>
+
+
+  <!-- =================================================
+       VIDEO INFO
+  ================================================== -->
+
+  <div
+    class="campaign-note"
+    *ngIf="creativeMediaType === 'VIDEO'"
+  >
+
+    <strong>
+      Video Ads
+    </strong>
+
+    <p>
+      Video upload is not connected yet.
+      Select Image for the current Meta Ad test.
+    </p>
+
+  </div>
+
+
+  <!-- =================================================
+       PRIMARY TEXT
+  ================================================== -->
+
+  <label>
+
+    Primary Text *
+
+    <textarea
+      name="primaryText"
+      [(ngModel)]="primaryText"
+      rows="5"
+      maxlength="2000"
+      placeholder="Example: Grow your business with AMI HUB digital marketing solutions."
+      [disabled]="submitting || !!createdAdId"
+      required
+    ></textarea>
+
+  </label>
+
+
+  <!-- =================================================
+       HEADLINE
+  ================================================== -->
+
+  <label>
+
+    Headline
+
+    <input
+      type="text"
+      name="headline"
+      [(ngModel)]="headline"
+      maxlength="255"
+      placeholder="Example: Grow Your Business with AMI HUB"
+      [disabled]="submitting || !!createdAdId"
+    >
+
+  </label>
+
+
+  <!-- =================================================
+       DESCRIPTION
+  ================================================== -->
+
+  <label>
+
+    Description
+
+    <textarea
+      name="description"
+      [(ngModel)]="description"
+      rows="3"
+      maxlength="1000"
+      placeholder="Example: Website Development & Digital Marketing in Madurai"
+      [disabled]="submitting || !!createdAdId"
+    ></textarea>
+
+  </label>
+
+
+  <!-- =================================================
+       DESTINATION URL
+  ================================================== -->
+
+  <label>
+
+    Destination URL *
+
+    <input
+      type="url"
+      name="destinationUrl"
+      [(ngModel)]="destinationUrl"
+      placeholder="https://yourwebsite.com"
+      [disabled]="submitting || !!createdAdId"
+      required
+    >
+
+    <small class="field-help">
+      Must be a public HTTPS website URL.
+    </small>
+
+  </label>
+
+
+  <!-- =================================================
+       CALL TO ACTION
+  ================================================== -->
+
+  <label>
+
+    Call To Action *
+
+    <select
+      name="callToAction"
+      [(ngModel)]="callToAction"
+      [disabled]="submitting || !!createdAdId"
+      required
+    >
+
+      <option
+        *ngFor="let item of callToActions"
+        [value]="item.value"
+      >
+        {{ item.label }}
+      </option>
+
+    </select>
+
+  </label>
+
+
+  <!-- =================================================
+       SUMMARY
+  ================================================== -->
+
+  <div class="adset-settings-summary">
+
+    <div>
+
+      <span>
+        Facebook Page
+      </span>
+
+      <strong>
+        {{
+          selectedPageId
+            ? selectedFacebookPageName()
+            : 'Not selected'
+        }}
+      </strong>
+
+    </div>
+
+
+    <div>
+
+      <span>
+        Instagram
+      </span>
+
+      <strong>
+        {{
+          selectedInstagramAccountId
+            ? selectedInstagramName()
+            : 'Not selected'
+        }}
+      </strong>
+
+    </div>
+
+
+    <div>
+
+      <span>
+        Media
+      </span>
+
+      <strong>
+        {{ creativeMediaType }}
+      </strong>
+
+    </div>
+
+  </div>
+
+
+  <!-- =================================================
+       SAFE CREATION
+  ================================================== -->
+
+  <div class="campaign-note">
+
+    <strong>
+      Safe creation
+    </strong>
+
+    <p>
+      The final Meta Ad will be created with
+      <strong>PAUSED</strong>
+      status. It will not start spending automatically.
+    </p>
+
+  </div>
+
+
+  <!-- =================================================
+       ERROR
+  ================================================== -->
+
+  <div
+    class="form-error"
+    *ngIf="createError"
+  >
+    {{ createError }}
+  </div>
+
+
+  <!-- =================================================
+       SUCCESS
+  ================================================== -->
+
+  <div
+    class="form-success"
+    *ngIf="createSuccess"
+  >
+    {{ createSuccess }}
+  </div>
+
+
+  <!-- =================================================
+       FINAL AD CREATED
+  ================================================== -->
+
+  <div
+    class="adset-created-box"
+    *ngIf="createdAdId"
+  >
+
+    <span class="success-icon">
+      ✓
+    </span>
+
+    <div>
+
+      <strong>
+        Meta Ad created successfully
+      </strong>
+
+      <p>
+        {{ createdAdName }}
+      </p>
+
+      <small>
+        Meta Ad ID:
+        {{ createdAdId }}
+      </small>
+
+      <br>
+
+      <small>
+        Status: PAUSED
+      </small>
+
+    </div>
+
+  </div>
+
+
+  <!-- =================================================
+       CREATE FINAL AD
+  ================================================== -->
+
+  <div
+    class="campaign-form-actions"
+    *ngIf="!createdAdId"
+  >
+
+    <button
+      type="button"
+      class="secondary-btn"
+      (click)="closeCreateCampaign()"
+      [disabled]="submitting"
+    >
+      Close
+    </button>
+
+
+    <button
+      type="submit"
+      class="primary"
+      [disabled]="
+        submitting ||
+        loadingCreativeAssets ||
+        creativeMediaType !== 'IMAGE'
+      "
+    >
+
+      {{
+        submitting
+          ? 'Creating Meta Ad...'
+          : 'Create Final Meta Ad'
+      }}
+
+    </button>
+
+  </div>
+
+
+  <!-- =================================================
+       DONE
+  ================================================== -->
+
+  <div
+    class="campaign-form-actions"
+    *ngIf="createdAdId"
+  >
+
+    <button
+      type="button"
+      class="primary"
+      (click)="closeCreateCampaign()"
+    >
+      Done
+    </button>
+
+  </div>
+
+</form>

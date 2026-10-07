@@ -3,72 +3,116 @@ import { Module } from '../../core/models/crm-schema.model';
 export const DigitalMarketingConfig: Module = {
   "title": "Digital Marketing",
   "tabs": [
+
+    // =====================================================
+    // MASTER DIGITAL MARKETING PACKAGES
+    // =====================================================
+    {
+      "key": "digitalMarketingPlans",
+      "title": "Plan Packages",
+      "fields": [
+        {
+          "key": "name",
+          "label": "Plan Name",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "price",
+          "label": "Monthly Price ₹",
+          "type": "number",
+          "required": true
+        },
+        {
+          "key": "posterCount",
+          "label": "Posters",
+          "type": "number",
+          "required": true
+        },
+        {
+          "key": "videoCount",
+          "label": "Videos",
+          "type": "number",
+          "required": true
+        },
+        {
+          "key": "description",
+          "label": "Description",
+          "type": "textarea",
+          "required": false
+        }
+      ],
+      "statuses": [
+        "ACTIVE",
+        "INACTIVE"
+      ],
+      "rows": []
+    },
+
+    // =====================================================
+    // CUSTOMER MONTHLY PLAN
+    // =====================================================
     {
       "key": "plans",
       "title": "Monthly plans",
       "fields": [
-       {
-  "key": "title",
-  "label": "Plan name",
-  "type": "text",
+        {
+          "key": "customerId",
+          "label": "Customer",
+          "type": "customer",
+          "required": true
+        },
+        {
+          "key": "digitalMarketingPlanId",
+          "label": "Plan Package",
+          "type": "digitalMarketingPlan",
+          "required": true
+        },
+        {
+          "key": "month",
+          "label": "Month",
+          "type": "month",
+          "required": true
+        },
+        {
+  "key": "planStartDate",
+  "label": "Plan Start Date",
+  "type": "date",
   "required": true
+},
+{
+  "key": "nextPaymentDate",
+  "label": "Next Payment Date",
+  "type": "date",
+  "required": false,
+  "readonly": true
 },
         {
-  "key": "customerId",
-  "label": "Customer",
-  "type": "customer",
-  "required": true
-},
-     {
-  "key": "month",
-  "label": "Month",
-  "type": "month",
-  "required": true
-},
-        {
-          "key": "platforms",
-          "label": "Platforms",
-          "type": "text"
+          "key": "monthlyPrice",
+          "label": "Monthly Price ₹",
+          "type": "number",
+          "required": true,
+          "readonly": true
         },
         {
           "key": "posterTarget",
           "label": "Posters",
-          "type": "number"
-        },
-        {
-          "key": "reelTarget",
-          "label": "Reels",
-          "type": "number"
-        },
-        {
-          "key": "storyTarget",
-          "label": "Stories",
-          "type": "number"
+          "type": "number",
+          "required": true,
+          "readonly": true
         },
         {
           "key": "videoTarget",
           "label": "Videos",
-          "type": "number"
+          "type": "number",
+          "required": true,
+          "readonly": true
         },
         {
-          "key": "assignedEmployees",
-          "label": "Team",
-          "type": "employee-list"
-        },
-        {
-          "key": "planDueDate",
-          "label": "Content plan due",
-          "type": "date"
-        },
-        {
-          "key": "assetsDueDate",
-          "label": "Customer assets due",
-          "type": "date"
-        },
-        {
-          "key": "reportDueDate",
-          "label": "Monthly report due",
-          "type": "date"
+          "key": "autoPayEnabled",
+          "label": "Auto Pay",
+          "type": "checkbox",
+          "required": false
         }
       ],
       "statuses": [
@@ -78,77 +122,100 @@ export const DigitalMarketingConfig: Module = {
       ],
       "rows": []
     },
+
+ // =====================================================
+// CONTENT CALENDAR
+// =====================================================
+{
+  "key": "content",
+  "title": "Content calendar",
+  "fields": [
+
     {
-      "key": "content",
-      "title": "Content calendar",
-      "fields": [
-      {
-  "key": "title",
-  "label": "Content title",
-  "type": "text",
-  "required": true
-},
-       {
-  "key": "marketingPlanId",
-    "label": "Marketing plan",
-  "type": "plan",
-  "required": true
-},
-       {
-  "key": "customerId",
-  "label": "Customer",
-  "type": "customer",
-  "required": true
-},
-        {
-          "key": "contentType",
-          "label": "Content type",
-          "type": "text"
-        },
-        {
-          "key": "platform",
-          "label": "Platform",
-          "type": "text"
-        },
-        {
-          "key": "scheduledDate",
-          "label": "Scheduled date",
-          "type": "date"
-        },
-        {
-          "key": "assignedTo",
-          "label": "Assigned to",
-          "type": "employee"
-        },
-        {
-          "key": "fileUrl",
-          "label": "Creative URL",
-          "type": "url"
-        },
-        {
-          "key": "clientFeedback",
-          "label": "Client feedback",
-          "type": "textarea"
-        },
-        {
-          "key": "approvalDueDate",
-          "label": "Client approval due",
-          "type": "date"
-        }
-      ],
-      "statuses": [
-        "PLANNED",
-        "ASSIGNED",
-        "CREATED",
-        "INTERNAL_REVIEW",
-        "CLIENT_REVIEW",
-        "REVISION",
-        "APPROVED",
-        "SCHEDULED",
-        "PUBLISHED"
-      ],
-      "rows": []
+      "key": "customerId",
+      "label": "Customer",
+      "type": "customer",
+      "required": true,
+      "readonly": true
     },
+
+    {
+      "key": "marketingPlanId",
+      "label": "Monthly Plan",
+      "type": "plan",
+      "required": true,
+      "readonly": true
+    },
+
+    {
+      "key": "scheduledDate",
+      "label": "Scheduled Date",
+      "type": "date",
+      "required": true,
+      "readonly": true
+    },
+
+    {
+      "key": "title",
+      "label": "Content Title",
+      "type": "text",
+      "required": true
+    },
+
+    {
+      "key": "contentType",
+      "label": "Content Type",
+      "type": "select",
+      "required": true,
+      "options": [
+        "Poster",
+        "Video"
+      ]
+    },
+
+    {
+      "key": "platform",
+      "label": "Platform",
+      "type": "select",
+      "required": true,
+      "options": [
+        "Instagram",
+        "Facebook",
+        "Instagram + Facebook",
+        "YouTube",
+        "LinkedIn",
+        "Website",
+        "Other"
+      ]
+    },
+
+    {
+      "key": "assignedTo",
+      "label": "Assigned Employee",
+      "type": "employee",
+      "required": true
+    }
+
+  ],
+
+  "statuses": [
+    "PLANNED",
+    "ASSIGNED",
+    "CREATED",
+    "INTERNAL_REVIEW",
+    "CLIENT_REVIEW",
+    "REVISION",
+    "APPROVED",
+    "SCHEDULED",
+    "PUBLISHED"
+  ],
+
+  "rows": []
+},
+
+    // =====================================================
+    // AD CAMPAIGNS
+    // =====================================================
     {
       "key": "campaigns",
       "title": "Ad campaigns",
@@ -171,7 +238,7 @@ export const DigitalMarketingConfig: Module = {
           "type": "select",
           "required": true,
           "options": [
-            "Meta \u2014 Facebook & Instagram",
+            "Meta — Facebook & Instagram",
             "Google Ads",
             "LinkedIn",
             "YouTube",
@@ -198,13 +265,13 @@ export const DigitalMarketingConfig: Module = {
         },
         {
           "key": "budget",
-          "label": "Approved ad budget \u20b9",
+          "label": "Approved ad budget ₹",
           "type": "number",
           "required": true
         },
         {
           "key": "actualSpend",
-          "label": "Actual ad spend \u20b9",
+          "label": "Actual ad spend ₹",
           "type": "number",
           "required": true
         },
@@ -241,6 +308,10 @@ export const DigitalMarketingConfig: Module = {
       ],
       "rows": []
     },
+
+    // =====================================================
+    // CAMPAIGN ENQUIRIES
+    // =====================================================
     {
       "key": "campaignLeads",
       "title": "Campaign enquiries",
@@ -303,5 +374,6 @@ export const DigitalMarketingConfig: Module = {
       ],
       "rows": []
     }
+
   ]
 };

@@ -53,20 +53,23 @@ export abstract class RecordPageController {
   error = "";
   confirmDelete: any = null;
   detailTab = "Overview";
-  refs: Record<string, string> = {
-    lead: "leads",
-    customer: "customers",
-    project: "projectDirectory",
-    employee: "directory",
-    "employee-list": "directory",
-    invoice: "invoiceDirectory",
-    installment: "installments",
-    plan: "plans",
-    visit: "visits",
-    campaign: "campaigns",
-    subscription: "subscriptions",
-    promise: "promises",
-  };
+refs: Record<string, string> = {
+  lead: "leads",
+  customer: "customers",
+  project: "projectDirectory",
+  employee: "directory",
+  "employee-list": "directory",
+  invoice: "invoiceDirectory",
+  installment: "installments",
+  plan: "plans",
+
+  digitalMarketingPlan: "digitalMarketingPlans",
+
+  visit: "visits",
+  campaign: "campaigns",
+  subscription: "subscriptions",
+  promise: "promises",
+};
   roles = [
     "owner",
     "admin",
@@ -321,6 +324,51 @@ get visibleFields() {
   options(f: Field) {
     return this.store.list(this.refs[f.type] || "");
   }
+ fieldChanged(f: Field, value: any) {
+  // Auto-fill package values
+  if (
+    this.tab.key === "plans" &&
+    f.key === "digitalMarketingPlanId"
+  ) {
+    const selectedPlan = this.store
+      .list("digitalMarketingPlans")
+      .find((plan) => plan.id === value);
+
+    if (selectedPlan) {
+      this.draft.monthlyPrice = Number(selectedPlan.price || 0);
+      this.draft.posterTarget = Number(selectedPlan.posterCount || 0);
+      this.draft.videoTarget = Number(selectedPlan.videoCount || 0);
+    }
+  }
+
+  // Auto-calculate next payment date
+  if (
+    this.tab.key === "plans" &&
+    f.key === "planStartDate" &&
+    value
+  ) {
+    const [year, month, day] = String(value)
+      .split("-")
+      .map(Number);
+
+    const nextMonth = month === 12 ? 1 : month + 1;
+    const nextYear = month === 12 ? year + 1 : year;
+
+    const lastDayOfNextMonth = new Date(
+      nextYear,
+      nextMonth,
+      0
+    ).getDate();
+
+    const billingDay = Math.min(
+      day,
+      lastDayOfNextMonth
+    );
+
+    this.draft.nextPaymentDate =
+      `${nextYear}-${String(nextMonth).padStart(2, "0")}-${String(billingDay).padStart(2, "0")}`;
+  }
+}
   label(x: any) {
     return (
       x.businessName ||

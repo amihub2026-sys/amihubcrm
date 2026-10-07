@@ -232,16 +232,18 @@
 rows="3"
           ></textarea
           ><select
-            *ngIf="vm.refs[f.type] && f.type !== 'employee-list'"
-            [name]="f.key"
-            [(ngModel)]="vm.draft[f.key]"
-            [required]="first || !!f.required"
-          >
-            <option value="">Select {{ f.label.toLowerCase() }}</option>
-            <option *ngFor="let o of vm.options(f)" [value]="o.id">
-              {{ vm.label(o) }}
-            </option></select
-          ><select
+  *ngIf="vm.refs[f.type] && f.type !== 'employee-list'"
+  [name]="f.key"
+  [(ngModel)]="vm.draft[f.key]"
+  (ngModelChange)="vm.fieldChanged(f, $event)"
+  [required]="first || !!f.required"
+>
+  <option value="">Select {{ f.label.toLowerCase() }}</option>
+
+  <option *ngFor="let o of vm.options(f)" [value]="o.id">
+    {{ vm.label(o) }}
+  </option>
+</select><select
             *ngIf="f.type === 'employee-list'"
             multiple
             [name]="f.key"
@@ -277,6 +279,7 @@ rows="3"
             [type]="f.type"
             [name]="f.key"
             [(ngModel)]="vm.draft[f.key]"
+            (ngModelChange)="vm.fieldChanged(f, $event)"
             [required]="first || !!f.required"
             [readOnly]="
   f.readonly ||

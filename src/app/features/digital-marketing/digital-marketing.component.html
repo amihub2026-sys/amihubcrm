@@ -1,51 +1,92 @@
-<section class="digital-marketing-workspace" aria-label="Digital Marketing">
+<section
+  class="digital-marketing-workspace"
+  aria-label="Digital Marketing"
+>
 
   <nav
     class="section-navigation"
     aria-label="Digital Marketing screens"
   >
 
+    <!-- ========================= -->
+    <!-- PLAN PACKAGES -->
+    <!-- ========================= -->
+
+    <a
+      *ngIf="access.can('digitalMarketingPlans')"
+      routerLink="plan-packages"
+      routerLinkActive="active"
+    >
+      Plan Packages
+    </a>
+
+
+    <!-- ========================= -->
+    <!-- CUSTOMER MONTHLY PLAN -->
+    <!-- ========================= -->
+
     <a
       *ngIf="access.can('plans')"
       routerLink="plans"
       routerLinkActive="active"
     >
-      Monthly plans
+      Monthly Plans
     </a>
+
+
+    <!-- ========================= -->
+    <!-- CONTENT CALENDAR -->
+    <!-- ========================= -->
 
     <a
       *ngIf="access.can('content')"
       routerLink="content"
       routerLinkActive="active"
     >
-      Content calendar
+      Content Calendar
     </a>
+
+
+    <!-- ========================= -->
+    <!-- TODAY / UPCOMING REMINDERS -->
+    <!-- ========================= -->
+
+    <a
+      *ngIf="access.can('content')"
+      routerLink="reminders"
+      routerLinkActive="active"
+    >
+      Reminders
+    </a>
+
+
+    <!-- ========================= -->
+    <!-- META ADS CURRENTLY RUNNING -->
+    <!-- ========================= -->
 
     <a
       *ngIf="access.can('campaigns')"
-      routerLink="campaigns"
+      routerLink="meta-ads-running"
       routerLinkActive="active"
     >
-      Ad campaigns
+      Meta Ads Running
     </a>
+
+
+    <!-- ========================= -->
+    <!-- META ADS PERFORMANCE -->
+    <!-- ========================= -->
 
     <a
       *ngIf="access.can('campaigns')"
       routerLink="meta-ads"
       routerLinkActive="active"
     >
-      Meta Ads
-    </a>
-
-    <a
-      *ngIf="access.can('campaignLeads')"
-      routerLink="campaignLeads"
-      routerLinkActive="active"
-    >
-      Campaign enquiries
+      Meta Ads Tracking
     </a>
 
   </nav>
+
 
   <router-outlet />
 

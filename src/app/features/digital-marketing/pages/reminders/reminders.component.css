@@ -1,0 +1,452 @@
+:host {
+  display: block;
+}
+
+
+/* =====================================================
+   PAGE HEADING
+===================================================== */
+
+.page-heading {
+  margin-bottom: 24px;
+}
+
+.page-heading h1 {
+  margin: 6px 0 8px;
+}
+
+.page-heading p {
+  margin: 0;
+  color: #748299;
+}
+
+
+/* =====================================================
+   SUMMARY CARDS
+===================================================== */
+
+.reminder-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 26px;
+}
+
+.summary-card {
+  background: #ffffff;
+  border: 1px solid #e3e9f2;
+  border-radius: 14px;
+  padding: 20px;
+}
+
+.summary-card span {
+  display: block;
+  font-size: 13px;
+  color: #718096;
+  margin-bottom: 8px;
+}
+
+.summary-card strong {
+  display: block;
+  font-size: 28px;
+  color: #17345c;
+}
+
+.summary-card small {
+  display: block;
+  margin-top: 7px;
+  color: #8794a7;
+  font-size: 12px;
+}
+
+.summary-card.pending {
+  border-left: 4px solid #e5484d;
+}
+
+.summary-card.completed {
+  border-left: 4px solid #2ea66f;
+}
+
+
+/* =====================================================
+   REMINDER SECTION
+===================================================== */
+
+.reminders-section {
+  background: #ffffff;
+  border: 1px solid #e3e9f2;
+  border-radius: 16px;
+  padding: 22px;
+  margin-bottom: 24px;
+}
+
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.section-heading h2 {
+  margin: 0 0 4px;
+  font-size: 20px;
+  color: #17345c;
+}
+
+.section-heading p {
+  margin: 0;
+  color: #7c899c;
+  font-size: 13px;
+}
+
+.pending-count {
+  min-width: 32px;
+  height: 32px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 999px;
+
+  background: #fff0f0;
+  color: #d63f45;
+
+  font-weight: 700;
+  font-size: 13px;
+}
+
+
+/* =====================================================
+   REMINDER LIST
+===================================================== */
+
+.reminder-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+
+/* =====================================================
+   REMINDER CARD
+===================================================== */
+
+.reminder-card {
+  display: grid;
+
+  grid-template-columns:
+    110px
+    minmax(150px, 1fr)
+    minmax(180px, 1.5fr)
+    minmax(140px, 1fr)
+    minmax(130px, 0.9fr)
+    minmax(120px, 0.8fr)
+    auto;
+
+  gap: 16px;
+
+  align-items: center;
+
+  border: 1px solid #e6ebf3;
+  border-radius: 12px;
+
+  padding: 15px;
+
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.reminder-card:hover {
+  border-color: #c7d4e7;
+  background: #fbfcfe;
+}
+
+
+/* =====================================================
+   STATUS DOT
+===================================================== */
+
+.reminder-status-dot {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  font-size: 12px;
+  font-weight: 700;
+  color: #d4474c;
+}
+
+.red-dot,
+.green-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+}
+
+.red-dot {
+  background: #e3484e;
+
+  box-shadow:
+    0 0 0 4px rgba(227, 72, 78, 0.12);
+}
+
+.green-dot {
+  background: #2ea66f;
+
+  box-shadow:
+    0 0 0 4px rgba(46, 166, 111, 0.12);
+}
+
+.reminder-status-dot.completed {
+  color: #27875e;
+}
+
+
+/* =====================================================
+   CUSTOMER
+===================================================== */
+
+.reminder-customer {
+  min-width: 0;
+}
+
+.reminder-customer h3 {
+  margin: 0 0 4px;
+
+  color: #17345c;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.reminder-customer span {
+  font-size: 12px;
+  color: #7d8a9d;
+}
+
+
+/* =====================================================
+   CONTENT DETAILS
+===================================================== */
+
+.reminder-content {
+  min-width: 0;
+}
+
+.reminder-content strong {
+  display: block;
+
+  color: #233c5f;
+
+  font-size: 14px;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.reminder-content p {
+  margin: 4px 0 0;
+
+  font-size: 12px;
+  color: #8290a4;
+}
+
+
+/* =====================================================
+   DETAIL FIELDS
+===================================================== */
+
+.reminder-detail {
+  min-width: 0;
+}
+
+.reminder-detail span {
+  display: block;
+
+  margin-bottom: 4px;
+
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+
+  color: #9aa6b7;
+}
+
+.reminder-detail strong {
+  display: block;
+
+  color: #324763;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+/* =====================================================
+   ACTION BUTTON
+===================================================== */
+
+.reminder-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.details-btn {
+  height: 38px;
+
+  padding: 0 14px;
+
+  border: 1px solid #cbd8ea;
+  border-radius: 8px;
+
+  background: #ffffff;
+  color: #2e5ebd;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.details-btn:hover {
+  background: #f2f6ff;
+  border-color: #9eb6e2;
+}
+
+
+/* =====================================================
+   COMPLETED CARD
+===================================================== */
+
+.completed-section {
+  margin-top: 20px;
+}
+
+.completed-card {
+  opacity: 0.78;
+  background: #fbfdfc;
+}
+
+
+/* =====================================================
+   EMPTY STATE
+===================================================== */
+
+.empty-reminders {
+  min-height: 200px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  text-align: center;
+
+  border: 1px dashed #cfd9e7;
+  border-radius: 12px;
+
+  padding: 30px;
+}
+
+.empty-icon {
+  width: 46px;
+  height: 46px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 12px;
+
+  border-radius: 50%;
+
+  background: #edf8f3;
+  color: #27875e;
+
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.empty-reminders h3 {
+  margin: 0 0 6px;
+  color: #1f395a;
+}
+
+.empty-reminders p {
+  margin: 0;
+  color: #7c899c;
+  font-size: 13px;
+}
+
+
+/* =====================================================
+   TABLET
+===================================================== */
+
+@media (max-width: 1200px) {
+
+  .reminder-card {
+    grid-template-columns:
+      100px
+      minmax(140px, 1fr)
+      minmax(170px, 1.4fr)
+      minmax(130px, 1fr)
+      auto;
+  }
+
+  .reminder-detail:nth-of-type(2),
+  .reminder-detail:nth-of-type(3) {
+    display: none;
+  }
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 760px) {
+
+  .reminder-summary {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .reminders-section {
+    padding: 15px;
+  }
+
+  .reminder-card {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .reminder-detail {
+    display: block !important;
+  }
+
+  .reminder-actions {
+    justify-content: flex-start;
+  }
+
+  .details-btn {
+    width: 100%;
+  }
+}
