@@ -1,0 +1,860 @@
+<!-- =====================================================
+     PAGE HEADER
+===================================================== -->
+
+<div class="page-heading">
+
+  <div>
+    <div class="eyebrow">
+      CUSTOMERS / DOMAIN RENEWALS
+    </div>
+
+    <h1>Domain renewals</h1>
+
+    <p>
+      Track customer domains, expiry dates, payments and follow-up reminders.
+    </p>
+  </div>
+
+  <button
+    type="button"
+    class="primary"
+    (click)="openAddDomain()">
+    ＋ Add domain
+  </button>
+
+</div>
+
+
+<!-- =====================================================
+     SUMMARY CARDS
+===================================================== -->
+
+<div class="metric-grid">
+
+  <article class="metric">
+    <span>Total domains</span>
+
+    <strong>
+      {{ totalDomains }}
+    </strong>
+
+    <small>
+      All customer domains
+    </small>
+  </article>
+
+
+  <article class="metric">
+    <span>Due soon</span>
+
+    <strong>
+      {{ dueSoonCount }}
+    </strong>
+
+    <small>
+      Renewal approaching
+    </small>
+  </article>
+
+
+  <article class="metric urgent-card">
+    <span>Needs follow-up</span>
+
+    <strong>
+      {{ followUpCount }}
+    </strong>
+
+    <small>
+      Payment / customer response
+    </small>
+  </article>
+
+
+  <article class="metric expired-card">
+    <span>Expired</span>
+
+    <strong>
+      {{ expiredCount }}
+    </strong>
+
+    <small>
+      Needs immediate attention
+    </small>
+  </article>
+
+</div>
+
+
+<!-- =====================================================
+     DOMAIN LIST CARD
+===================================================== -->
+
+<div class="renewal-card">
+
+  <div class="renewal-header">
+
+    <div>
+      <h2>Customer domains</h2>
+
+      <p>
+        Manage expiry dates, renewal status, payments and reminders.
+      </p>
+    </div>
+
+  </div>
+
+
+  <!-- =================================================
+       EMPTY STATE
+       SHOW ONLY WHEN THERE ARE NO DOMAINS
+  ================================================= -->
+
+  <div
+    class="empty-state"
+    *ngIf="domains.length === 0">
+
+    <div class="empty-icon">
+      🌐
+    </div>
+
+    <h3>
+      No domains added yet
+    </h3>
+
+    <p>
+      Add a customer domain to start tracking its renewal.
+    </p>
+
+    <button
+      type="button"
+      class="primary"
+      (click)="openAddDomain()">
+      ＋ Add first domain
+    </button>
+
+  </div>
+
+
+  <!-- =================================================
+       SAVED DOMAIN RECORDS
+  ================================================= -->
+
+  <div
+    class="domain-list"
+    *ngIf="domains.length > 0">
+
+
+    <div
+      class="domain-row"
+      *ngFor="let domain of domains">
+
+
+      <!-- DOMAIN + CUSTOMER -->
+
+      <div class="domain-main">
+
+        <strong>
+          {{ domain.domainName }}
+        </strong>
+
+        <span>
+          {{ customerName(domain.customerId) }}
+        </span>
+
+      </div>
+
+
+      <!-- PROVIDER -->
+
+      <div class="domain-info">
+
+        <small>
+          Provider
+        </small>
+
+        <strong>
+          {{ domain.provider || '—' }}
+        </strong>
+
+      </div>
+
+
+      <!-- EXPIRY -->
+
+      <div class="domain-info">
+
+        <small>
+          Expiry date
+        </small>
+
+        <strong>
+          {{ domain.expiryDate | date:'dd-MM-yyyy' }}
+        </strong>
+
+      </div>
+
+
+      <!-- AMOUNT -->
+
+      <div class="domain-info">
+
+        <small>
+          Renewal amount
+        </small>
+
+        <strong>
+          ₹{{ domain.renewalAmount || 0 }}
+        </strong>
+
+      </div>
+
+
+      <!-- FOLLOW UP -->
+
+      <div class="domain-info">
+
+        <small>
+          Next follow-up
+        </small>
+
+        <strong>
+          {{
+            domain.nextFollowUpDate
+              ? (domain.nextFollowUpDate | date:'dd-MM-yyyy')
+              : '—'
+          }}
+        </strong>
+
+      </div>
+
+
+      <!-- STATUS -->
+
+      <div class="domain-status">
+
+        <span
+          class="status"
+          [ngClass]="statusClass(domain.status)">
+
+          {{ statusLabel(domain.status) }}
+
+        </span>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =====================================================
+     ADD DOMAIN MODAL
+===================================================== -->
+
+<div
+  class="modal-backdrop"
+  *ngIf="showAddDomain"
+  (click)="closeAddDomain()">
+
+  <div
+    class="domain-modal"
+    (click)="$event.stopPropagation()">
+
+
+    <!-- =================================================
+         MODAL HEADER
+    ================================================= -->
+
+    <div class="modal-header">
+
+      <div>
+
+        <div class="eyebrow">
+          CUSTOMER DOMAIN
+        </div>
+
+        <h2>
+          Add domain renewal
+        </h2>
+
+        <p>
+          Add the domain details and CRM will track renewal and follow-up dates.
+        </p>
+
+      </div>
+
+
+      <button
+        type="button"
+        class="close-btn"
+        (click)="closeAddDomain()">
+        ✕
+      </button>
+
+    </div>
+
+
+    <!-- =================================================
+         FORM
+    ================================================= -->
+
+    <form class="domain-form">
+
+      <div class="form-grid">
+
+
+        <!-- =================================================
+             CUSTOMER
+        ================================================= -->
+
+        <div class="form-group full">
+
+          <label>
+            Customer
+            <span class="required">*</span>
+          </label>
+
+          <select
+            name="customerId"
+            [(ngModel)]="domainForm.customerId">
+
+            <option value="">
+              Select customer
+            </option>
+
+            <option
+              *ngFor="let customer of customers"
+              [value]="customer.id">
+
+              {{ customerLabel(customer) }}
+
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <!-- =================================================
+             DOMAIN NAME
+        ================================================= -->
+
+        <div class="form-group">
+
+          <label>
+            Domain name
+            <span class="required">*</span>
+          </label>
+
+          <input
+            type="text"
+            name="domainName"
+            [(ngModel)]="domainForm.domainName"
+            placeholder="example.com"
+            autocomplete="off">
+
+        </div>
+
+
+        <!-- =================================================
+             DOMAIN PROVIDER
+        ================================================= -->
+
+        <div class="form-group">
+
+          <label>
+            Domain provider
+          </label>
+
+          <select
+            name="provider"
+            [(ngModel)]="domainForm.provider">
+
+            <option value="">
+              Select provider
+            </option>
+
+            <option value="GoDaddy">
+              GoDaddy
+            </option>
+
+            <option value="Hostinger">
+              Hostinger
+            </option>
+
+            <option value="Namecheap">
+              Namecheap
+            </option>
+
+            <option value="BigRock">
+              BigRock
+            </option>
+
+            <option value="Cloudflare">
+              Cloudflare
+            </option>
+
+            <option value="Google Domains">
+              Google Domains
+            </option>
+
+            <option value="Other">
+              Other
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <!-- =================================================
+             PURCHASE DATE
+        ================================================= -->
+
+        <div class="form-group">
+
+          <label>
+            Purchase date
+          </label>
+
+          <input
+            type="date"
+            name="purchaseDate"
+            [(ngModel)]="domainForm.purchaseDate">
+
+        </div>
+
+
+        <!-- =================================================
+             EXPIRY DATE
+        ================================================= -->
+
+        <div class="form-group">
+
+          <label>
+            Expiry / renewal date
+            <span class="required">*</span>
+          </label>
+
+          <input
+            type="date"
+            name="expiryDate"
+            [(ngModel)]="domainForm.expiryDate">
+
+        </div>
+
+
+        <!-- =================================================
+             RENEWAL AMOUNT
+        ================================================= -->
+
+        <div class="form-group">
+
+          <label>
+            Renewal amount
+          </label>
+
+          <div class="money-input">
+
+            <span>
+              ₹
+            </span>
+
+            <input
+              type="number"
+              min="0"
+              step="1"
+              name="renewalAmount"
+              [(ngModel)]="domainForm.renewalAmount"
+              placeholder="0">
+
+          </div>
+
+        </div>
+
+
+        <!-- =================================================
+             STATUS
+        ================================================= -->
+
+        <div class="form-group">
+
+          <label>
+            Renewal status
+          </label>
+
+          <select
+            name="status"
+            [(ngModel)]="domainForm.status">
+
+            <option value="ACTIVE">
+              Active
+            </option>
+
+            <option value="DUE_SOON">
+              Due soon
+            </option>
+
+            <option value="PAYMENT_PENDING">
+              Payment pending
+            </option>
+
+            <option value="PROMISED_DATE">
+              Customer promised date
+            </option>
+
+            <option value="ON_HOLD">
+              On hold / Not active
+            </option>
+
+            <option value="RENEWED">
+              Renewed
+            </option>
+
+            <option value="EXPIRED">
+              Expired
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <!-- =================================================
+             STATUS INFORMATION
+        ================================================= -->
+
+        <div class="status-help full">
+
+
+          <div *ngIf="domainForm.status === 'ACTIVE'">
+
+            <strong>
+              Active
+            </strong>
+
+            <p>
+              Domain is active. CRM will monitor its expiry date automatically.
+            </p>
+
+          </div>
+
+
+          <div *ngIf="domainForm.status === 'DUE_SOON'">
+
+            <strong>
+              Due soon
+            </strong>
+
+            <p>
+              Renewal date is approaching. Customer follow-up may be required.
+            </p>
+
+          </div>
+
+
+          <div *ngIf="domainForm.status === 'PAYMENT_PENDING'">
+
+            <strong>
+              Payment pending
+            </strong>
+
+            <p>
+              Customer has not completed payment. Set the next follow-up date below.
+            </p>
+
+          </div>
+
+
+          <div *ngIf="domainForm.status === 'PROMISED_DATE'">
+
+            <strong>
+              Customer promised date
+            </strong>
+
+            <p>
+              Customer has given another payment date. Enter that date as the next reminder.
+            </p>
+
+          </div>
+
+
+          <div *ngIf="domainForm.status === 'ON_HOLD'">
+
+            <strong>
+              On hold / Not active
+            </strong>
+
+            <p>
+              Customer has not confirmed renewal. Keep a follow-up date if required.
+            </p>
+
+          </div>
+
+
+          <div *ngIf="domainForm.status === 'RENEWED'">
+
+            <strong>
+              Renewed
+            </strong>
+
+            <p>
+              Enter the new expiry date below so CRM can start the next renewal cycle.
+            </p>
+
+          </div>
+
+
+          <div *ngIf="domainForm.status === 'EXPIRED'">
+
+            <strong>
+              Expired
+            </strong>
+
+            <p>
+              Domain expiry date has passed and renewal still requires action.
+            </p>
+
+          </div>
+
+
+        </div>
+
+
+        <!-- =================================================
+             NEXT FOLLOW-UP DATE
+        ================================================= -->
+
+        <div class="form-group">
+
+          <label>
+            Next follow-up / reminder date
+          </label>
+
+          <input
+            type="date"
+            name="nextFollowUpDate"
+            [(ngModel)]="domainForm.nextFollowUpDate">
+
+          <small class="field-help">
+            Use this when the customer asks you to contact them again on another date.
+          </small>
+
+        </div>
+
+
+        <!-- =================================================
+             NEW EXPIRY DATE
+        ================================================= -->
+
+        <div
+          class="form-group"
+          *ngIf="domainForm.status === 'RENEWED'">
+
+          <label>
+            New expiry date
+            <span class="required">*</span>
+          </label>
+
+          <input
+            type="date"
+            name="newExpiryDate"
+            [(ngModel)]="domainForm.newExpiryDate">
+
+          <small class="field-help">
+            After saving, this becomes the next domain renewal date.
+          </small>
+
+        </div>
+
+
+        <!-- =================================================
+             FOLLOW-UP NOTE
+        ================================================= -->
+
+        <div class="form-group full">
+
+          <label>
+            Follow-up note
+          </label>
+
+          <textarea
+            name="followUpNote"
+            [(ngModel)]="domainForm.followUpNote"
+            placeholder="Example: Customer said payment will be made on 20 October.">
+          </textarea>
+
+        </div>
+
+
+        <!-- =================================================
+             AUTOMATIC REMINDERS
+        ================================================= -->
+
+        <div class="reminder-box">
+
+          <div class="reminder-title">
+
+            <span class="reminder-icon">
+              🔔
+            </span>
+
+            <div>
+
+              <strong>
+                Automatic domain reminders
+              </strong>
+
+              <small>
+                CRM reminder schedule
+              </small>
+
+            </div>
+
+          </div>
+
+
+          <div class="reminder-timeline">
+
+
+            <div class="reminder-item">
+
+              <span>
+                30
+              </span>
+
+              <p>
+                days before expiry
+              </p>
+
+            </div>
+
+
+            <div class="reminder-item">
+
+              <span>
+                15
+              </span>
+
+              <p>
+                days before expiry
+              </p>
+
+            </div>
+
+
+            <div class="reminder-item warning">
+
+              <span>
+                7
+              </span>
+
+              <p>
+                days before expiry
+              </p>
+
+            </div>
+
+
+            <div class="reminder-item danger">
+
+              <span>
+                1
+              </span>
+
+              <p>
+                day before expiry
+              </p>
+
+            </div>
+
+
+          </div>
+
+
+          <p class="reminder-description">
+
+            When a reminder or follow-up date becomes due,
+            the CRM notification bell will show a
+
+            <strong class="red-text">
+              red dot
+            </strong>.
+
+          </p>
+
+        </div>
+
+
+        <!-- =================================================
+             INTERNAL NOTES
+        ================================================= -->
+
+        <div class="form-group full">
+
+          <label>
+            Internal notes
+          </label>
+
+          <textarea
+            name="notes"
+            [(ngModel)]="domainForm.notes"
+            placeholder="Domain renewal notes, registrar information or internal instructions.">
+          </textarea>
+
+        </div>
+
+
+      </div>
+
+
+      <!-- =================================================
+           ERROR MESSAGE
+      ================================================= -->
+
+      <div
+        class="save-error"
+        *ngIf="saveError">
+
+        {{ saveError }}
+
+      </div>
+
+
+      <!-- =================================================
+           ACTIONS
+      ================================================= -->
+
+      <div class="modal-actions">
+
+        <button
+          type="button"
+          class="secondary"
+          [disabled]="saving"
+          (click)="closeAddDomain()">
+
+          Cancel
+
+        </button>
+
+
+        <button
+          type="button"
+          class="primary"
+          [disabled]="saving"
+          (click)="saveDomain()">
+
+          {{ saving ? 'Saving...' : 'Save domain' }}
+
+        </button>
+
+      </div>
+
+    </form>
+
+  </div>
+
+</div>

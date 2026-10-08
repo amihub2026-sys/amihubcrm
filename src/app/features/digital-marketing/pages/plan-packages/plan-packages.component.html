@@ -1,0 +1,40 @@
+<div class="page-heading">
+  <div>
+    <div class="eyebrow">
+      DIGITAL MARKETING / PLAN PACKAGES
+    </div>
+
+    <h1>Digital Marketing Plans</h1>
+
+    <p>
+      Create and manage Silver, Gold, Platinum and Custom
+      digital marketing packages.
+    </p>
+  </div>
+
+  <button
+    class="primary"
+    (click)="open()"
+    *ngIf="canCreate"
+  >
+    ＋ Add Plan
+  </button>
+</div>
+
+<div class="metric-grid compact">
+  <article class="metric">
+    <span>Total Plans</span>
+    <strong>{{ rows.length }}</strong>
+    <small>Available marketing packages</small>
+  </article>
+
+  <article class="metric">
+    <span>Plan Types</span>
+    <strong>{{ tab.statuses.length }}</strong>
+    <small>Active / Inactive</small>
+  </article>
+</div>
+
+<app-record-table [vm]="this" />
+
+<app-record-editor [vm]="this" />

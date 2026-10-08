@@ -1,10 +1,14 @@
 import { Injectable } from '@angular/core';
+
 import {
   HttpClient,
   HttpParams,
 } from '@angular/common/http';
+
 import { Observable } from 'rxjs';
+
 import { environment } from '../../../../../environments/environment';
+
 
 /* =========================================================
    COMMON TYPES
@@ -15,6 +19,7 @@ export type MetaSyncState =
   | 'QUEUED'
   | 'RUNNING'
   | 'ERROR';
+
 
 export type MetaEntityKind =
   | 'campaign'
@@ -28,7 +33,9 @@ export type MetaEntityKind =
 
 export interface MetaCustomer {
   id: string;
+
   businessName?: string;
+
   accountManager?: string;
 }
 
@@ -39,12 +46,19 @@ export interface MetaCustomer {
 
 export interface MetaMetrics {
   spend?: number;
+
   impressions?: number;
+
   clicks?: number;
+
   leads?: number;
+
   reach?: number;
+
   cpl?: number;
+
   ctr?: number;
+
   cpm?: number;
 }
 
@@ -57,11 +71,13 @@ export interface MetaAccount {
   id: string;
 
   customerId: string;
+
   metaAccountId: string;
 
   name?: string;
 
   currency?: string;
+
   timezone?: string;
 
   accountStatus?: number;
@@ -73,11 +89,13 @@ export interface MetaAccount {
   syncError?: string;
 
   lastSyncedAt?: string | null;
+
   nextSyncAt?: string | null;
 
   syncMinutes?: number;
 
   createdAt?: string;
+
   updatedAt?: string;
 
   revision?: number;
@@ -170,10 +188,6 @@ export interface MetaDashboardAccount
 
 /* =========================================================
    CURRENCY SUMMARY
-
-   IMPORTANT:
-   The backend deliberately returns separate summaries
-   for each currency. Never combine them in Angular.
 ========================================================= */
 
 export interface MetaCurrencySummary {
@@ -297,17 +311,21 @@ export interface MetaLinkAccountRequest {
   connectionKey: string;
 }
 
+
 export interface MetaLinkAccountResponse {
   account: MetaAccount;
 }
+
 
 export interface MetaAccountUpdateResponse {
   account: MetaAccount;
 }
 
+
 export interface MetaSyncResponse {
   account: MetaAccount;
 }
+
 
 export interface MetaDashboardQuery {
   customerId?: string;
@@ -317,10 +335,246 @@ export interface MetaDashboardQuery {
   to?: string;
 }
 
+
 export interface MetaDetailQuery {
   from?: string;
 
   to?: string;
+}
+
+
+/* =========================================================
+   CREATE META CAMPAIGN
+========================================================= */
+
+export type MetaCampaignObjective =
+  | 'OUTCOME_AWARENESS'
+  | 'OUTCOME_TRAFFIC'
+  | 'OUTCOME_ENGAGEMENT'
+  | 'OUTCOME_LEADS'
+  | 'OUTCOME_SALES'
+  | 'OUTCOME_APP_PROMOTION';
+
+
+export interface MetaCreateCampaignRequest {
+  name: string;
+
+  objective: MetaCampaignObjective;
+
+  specialAdCategories?: string[];
+}
+
+
+export interface MetaCreatedCampaign {
+  id: string;
+
+  name: string;
+
+  objective: string;
+
+  status: string;
+
+  accountId: string;
+
+  metaAccountId: string;
+}
+
+
+export interface MetaCreateCampaignResponse {
+  campaign: MetaCreatedCampaign;
+}
+
+
+/* =========================================================
+   CREATE META AD SET / AUDIENCE
+========================================================= */
+
+export type MetaAdSetGender =
+  | 'ALL'
+  | 'MALE'
+  | 'FEMALE';
+
+
+export interface MetaCreateAdSetRequest {
+  campaignId: string;
+
+  name: string;
+
+  dailyBudget: number;
+
+  ageMin: number;
+
+  ageMax: number;
+
+  gender: MetaAdSetGender;
+
+  locationKey: string;
+
+  startTime: string;
+
+  endTime: string;
+
+  optimizationGoal: string;
+
+  billingEvent: string;
+
+  destinationType?: string;
+
+  promotedObject?: Record<string, unknown>;
+}
+
+
+export interface MetaCreatedAdSet {
+  id: string;
+
+  campaignId: string;
+
+  name: string;
+
+  dailyBudget: number;
+
+  ageMin: number;
+
+  ageMax: number;
+
+  gender: MetaAdSetGender;
+
+  locationKey: string;
+
+  startTime: string;
+
+  endTime: string;
+
+  status: string;
+
+  accountId: string;
+
+  metaAccountId: string;
+}
+
+
+export interface MetaCreateAdSetResponse {
+  adSet: MetaCreatedAdSet;
+}
+
+
+/* =========================================================
+   META LOCATION SEARCH
+========================================================= */
+
+export interface MetaTargetLocation {
+  key: string;
+
+  name: string;
+
+  type: string;
+
+  countryCode: string;
+
+  countryName: string;
+
+  region: string;
+
+  regionId: string;
+}
+
+
+export interface MetaLocationSearchResponse {
+  locations: MetaTargetLocation[];
+}
+
+
+/* =========================================================
+   META CREATIVE ASSETS
+========================================================= */
+
+export interface MetaFacebookPage {
+  id: string;
+
+  name: string;
+}
+
+
+export interface MetaInstagramAccount {
+  id: string;
+
+  name: string;
+
+  username: string;
+}
+
+
+export interface MetaCreativeAssetsResponse {
+  pages: MetaFacebookPage[];
+
+  instagramAccounts: MetaInstagramAccount[];
+}
+
+
+/* =========================================================
+   CREATE META IMAGE AD
+========================================================= */
+
+export interface MetaCreateImageAdRequest {
+  // Meta Ad Set ID
+  adSetId: string;
+
+  // Final Meta Ad name
+  name: string;
+
+  // Facebook Page selected from creativeAssets()
+  pageId: string;
+
+  // Optional Instagram account
+  instagramAccountId?: string;
+
+  // Main ad caption
+  primaryText: string;
+
+  // Optional headline
+  headline?: string;
+
+  // Optional description
+  description?: string;
+
+  // Public HTTPS landing page
+  destinationUrl: string;
+
+  // Public HTTPS image
+  imageUrl: string;
+
+  // Meta CTA value
+  callToAction: string;
+}
+
+
+export interface MetaCreatedAd {
+  id: string;
+
+  name: string;
+
+  adSetId: string;
+
+  pageId: string;
+
+  instagramAccountId: string;
+
+  imageUrl: string;
+
+  destinationUrl: string;
+
+  callToAction: string;
+
+  status: string;
+
+  accountId: string;
+
+  metaAccountId: string;
+}
+
+
+export interface MetaCreateImageAdResponse {
+  ad: MetaCreatedAd;
 }
 
 
@@ -336,6 +590,7 @@ export class MetaAdsService {
   private readonly baseUrl =
     `${environment.apiUrl}/meta`;
 
+
   constructor(
     private readonly http: HttpClient,
   ) {}
@@ -344,7 +599,8 @@ export class MetaAdsService {
   /* =======================================================
      INITIAL DATA
 
-     GET /api/meta/bootstrap
+     GET:
+     /api/meta/bootstrap
   ======================================================= */
 
   bootstrap():
@@ -359,9 +615,10 @@ export class MetaAdsService {
   /* =======================================================
      DASHBOARD
 
-     GET /api/meta/dashboard
+     GET:
+     /api/meta/dashboard
 
-     Optional:
+     OPTIONAL:
      customerId
      from
      to
@@ -371,28 +628,42 @@ export class MetaAdsService {
     query: MetaDashboardQuery = {},
   ): Observable<MetaDashboardResponse> {
 
-    let params = new HttpParams();
+    let params =
+      new HttpParams();
+
 
     if (query.customerId) {
-      params = params.set(
-        'customerId',
-        query.customerId,
-      );
+
+      params =
+        params.set(
+          'customerId',
+          query.customerId,
+        );
+
     }
+
 
     if (query.from) {
-      params = params.set(
-        'from',
-        query.from,
-      );
+
+      params =
+        params.set(
+          'from',
+          query.from,
+        );
+
     }
 
+
     if (query.to) {
-      params = params.set(
-        'to',
-        query.to,
-      );
+
+      params =
+        params.set(
+          'to',
+          query.to,
+        );
+
     }
+
 
     return this.http.get<MetaDashboardResponse>(
       `${this.baseUrl}/dashboard`,
@@ -406,10 +677,8 @@ export class MetaAdsService {
   /* =======================================================
      LINK / RECONNECT META ACCOUNT
 
-     POST /api/meta/accounts/link
-
-     Tokens and app secrets NEVER enter Angular.
-     Only the configured backend connection alias is sent.
+     POST:
+     /api/meta/accounts/link
   ======================================================= */
 
   linkAccount(
@@ -426,11 +695,8 @@ export class MetaAdsService {
   /* =======================================================
      ENABLE / PAUSE CRM SYNC
 
-     PATCH /api/meta/accounts/:id
-
-     IMPORTANT:
-     This only pauses CRM synchronization.
-     It does NOT pause campaigns or ads in Meta.
+     PATCH:
+     /api/meta/accounts/:id
   ======================================================= */
 
   setAccountEnabled(
@@ -450,7 +716,8 @@ export class MetaAdsService {
   /* =======================================================
      MANUAL SYNC
 
-     POST /api/meta/accounts/:id/sync
+     POST:
+     /api/meta/accounts/:id/sync
   ======================================================= */
 
   syncAccount(
@@ -464,13 +731,22 @@ export class MetaAdsService {
       to?: string;
     } = {};
 
+
     if (from) {
-      body.from = from;
+
+      body.from =
+        from;
+
     }
 
+
     if (to) {
-      body.to = to;
+
+      body.to =
+        to;
+
     }
+
 
     return this.http.post<MetaSyncResponse>(
       `${this.baseUrl}/accounts/${encodeURIComponent(accountId)}/sync`,
@@ -480,9 +756,127 @@ export class MetaAdsService {
 
 
   /* =======================================================
+     CREATE META CAMPAIGN
+
+     POST:
+     /api/meta/accounts/:id/campaigns
+
+     Campaign is created as PAUSED.
+  ======================================================= */
+
+  createCampaign(
+    accountId: string,
+    payload: MetaCreateCampaignRequest,
+  ): Observable<MetaCreateCampaignResponse> {
+
+    return this.http.post<MetaCreateCampaignResponse>(
+      `${this.baseUrl}/accounts/${encodeURIComponent(accountId)}/campaigns`,
+      payload,
+    );
+  }
+
+
+  /* =======================================================
+     CREATE META AD SET / AUDIENCE
+
+     POST:
+     /api/meta/accounts/:id/adsets
+
+     Ad Set is created as PAUSED.
+  ======================================================= */
+
+  createAdSet(
+    accountId: string,
+    payload: MetaCreateAdSetRequest,
+  ): Observable<MetaCreateAdSetResponse> {
+
+    return this.http.post<MetaCreateAdSetResponse>(
+      `${this.baseUrl}/accounts/${encodeURIComponent(accountId)}/adsets`,
+      payload,
+    );
+  }
+
+
+  /* =======================================================
+     SEARCH META TARGET LOCATIONS
+
+     GET:
+     /api/meta/accounts/:id/locations/search?q=Madurai
+  ======================================================= */
+
+  searchLocations(
+    accountId: string,
+    query: string,
+  ): Observable<MetaLocationSearchResponse> {
+
+    const params =
+      new HttpParams()
+        .set(
+          'q',
+          query.trim(),
+        );
+
+
+    return this.http.get<MetaLocationSearchResponse>(
+      `${this.baseUrl}/accounts/${encodeURIComponent(accountId)}/locations/search`,
+      {
+        params,
+      },
+    );
+  }
+
+
+  /* =======================================================
+     GET META CREATIVE ASSETS
+
+     GET:
+     /api/meta/accounts/:id/creative-assets
+
+     RETURNS:
+     - Facebook Pages
+     - Instagram Accounts
+  ======================================================= */
+
+  creativeAssets(
+    accountId: string,
+  ): Observable<MetaCreativeAssetsResponse> {
+
+    return this.http.get<MetaCreativeAssetsResponse>(
+      `${this.baseUrl}/accounts/${encodeURIComponent(accountId)}/creative-assets`,
+    );
+  }
+
+
+  /* =======================================================
+     CREATE META IMAGE AD
+
+     POST:
+     /api/meta/accounts/:id/ads
+
+     Creates:
+     - Meta creative configuration
+     - Final Meta Ad
+
+     Final Ad is created as PAUSED.
+  ======================================================= */
+
+  createImageAd(
+    accountId: string,
+    payload: MetaCreateImageAdRequest,
+  ): Observable<MetaCreateImageAdResponse> {
+
+    return this.http.post<MetaCreateImageAdResponse>(
+      `${this.baseUrl}/accounts/${encodeURIComponent(accountId)}/ads`,
+      payload,
+    );
+  }
+
+
+  /* =======================================================
      ACCOUNT DETAIL
 
-     GET /api/meta/accounts/:id/detail
+     GET:
+     /api/meta/accounts/:id/detail
   ======================================================= */
 
   detail(
@@ -490,21 +884,31 @@ export class MetaAdsService {
     query: MetaDetailQuery = {},
   ): Observable<MetaDetailResponse> {
 
-    let params = new HttpParams();
+    let params =
+      new HttpParams();
+
 
     if (query.from) {
-      params = params.set(
-        'from',
-        query.from,
-      );
+
+      params =
+        params.set(
+          'from',
+          query.from,
+        );
+
     }
 
+
     if (query.to) {
-      params = params.set(
-        'to',
-        query.to,
-      );
+
+      params =
+        params.set(
+          'to',
+          query.to,
+        );
+
     }
+
 
     return this.http.get<MetaDetailResponse>(
       `${this.baseUrl}/accounts/${encodeURIComponent(accountId)}/detail`,

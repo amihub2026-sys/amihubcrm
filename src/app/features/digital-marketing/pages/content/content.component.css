@@ -1,7 +1,551 @@
-/* Content calendar: page-specific layout. Shared controls retain their own styles. */
-:host { display:block; min-width:0; }
-.page-heading { margin-bottom:24px; }
-.page-heading p { max-width:64ch; }
-.metric-grid { margin-bottom:24px; }
-.page-note { margin:0 0 18px; font-size:14px; }
-@media(max-width:760px) { .page-heading { gap:16px; } }
+/* =========================================================
+   CONTENT CALENDAR PAGE
+   ========================================================= */
+
+:host {
+  display: block;
+  min-width: 0;
+}
+
+
+/* =========================================================
+   PAGE HEADING
+   ========================================================= */
+
+.page-heading {
+  margin-bottom: 28px;
+}
+
+.page-heading h1 {
+  margin: 6px 0 8px;
+}
+
+.page-heading p {
+  margin: 0;
+  max-width: 680px;
+}
+
+
+/* =========================================================
+   CUSTOMER + PLAN FILTER
+   ========================================================= */
+
+.calendar-filter-card {
+  background: #ffffff;
+  border: 1px solid #e3eaf5;
+  border-radius: 16px;
+  padding: 22px;
+  margin-bottom: 24px;
+}
+
+.calendar-filter {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  max-width: 900px;
+}
+
+.calendar-filter label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  font-size: 14px;
+  font-weight: 600;
+  color: #52627a;
+}
+
+.calendar-filter select {
+  width: 100%;
+  height: 48px;
+
+  border: 1px solid #d9e2ef;
+  border-radius: 10px;
+
+  background: #ffffff;
+  color: #152b4f;
+
+  padding: 0 14px;
+
+  font-size: 15px;
+  font-family: inherit;
+
+  outline: none;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.calendar-filter select:hover {
+  border-color: #aebdd2;
+}
+
+.calendar-filter select:focus {
+  border-color: #2d5fdb;
+  box-shadow: 0 0 0 3px rgba(45, 95, 219, 0.1);
+}
+
+.calendar-filter select:disabled {
+  background: #f5f7fb;
+  color: #9aa8ba;
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   PLAN SUMMARY
+   ========================================================= */
+
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.metric {
+  background: #ffffff;
+  border: 1px solid #e3eaf5;
+  border-radius: 14px;
+  padding: 20px;
+}
+
+.metric span {
+  display: block;
+  margin-bottom: 8px;
+
+  font-size: 13px;
+  color: #718096;
+}
+
+.metric strong {
+  display: block;
+
+  font-size: 26px;
+  font-weight: 700;
+  color: #102749;
+}
+
+.metric small {
+  display: block;
+  margin-top: 7px;
+
+  font-size: 13px;
+  color: #8290a5;
+}
+
+
+/* =========================================================
+   CALENDAR CONTAINER
+   ========================================================= */
+
+.content-calendar {
+  background: #ffffff;
+  border: 1px solid #e3eaf5;
+  border-radius: 16px;
+
+  padding: 22px;
+
+  overflow: hidden;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 20px;
+
+  margin-bottom: 20px;
+}
+
+.calendar-header h2 {
+  margin: 0 0 5px;
+
+  font-size: 22px;
+  font-weight: 700;
+
+  color: #102749;
+}
+
+.calendar-header p {
+  margin: 0;
+
+  font-size: 14px;
+  color: #75849a;
+}
+
+
+/* =========================================================
+   WEEK DAY HEADER
+   ========================================================= */
+
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+
+  border: 1px solid #e4eaf3;
+  border-bottom: none;
+
+  border-radius: 12px 12px 0 0;
+
+  overflow: hidden;
+}
+
+.calendar-weekdays div {
+  padding: 12px 8px;
+
+  text-align: center;
+
+  background: #f6f8fc;
+
+  border-right: 1px solid #e4eaf3;
+
+  color: #63748c;
+
+  font-size: 12px;
+  font-weight: 700;
+
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.calendar-weekdays div:last-child {
+  border-right: none;
+}
+
+.calendar-weekdays div:first-child {
+  color: #d15a5a;
+}
+
+
+/* =========================================================
+   CALENDAR GRID
+   ========================================================= */
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+
+  border-top: 1px solid #e4eaf3;
+  border-left: 1px solid #e4eaf3;
+}
+
+.calendar-day {
+  min-width: 0;
+  min-height: 155px;
+
+  padding: 10px;
+
+  background: #ffffff;
+
+  border-right: 1px solid #e4eaf3;
+  border-bottom: 1px solid #e4eaf3;
+
+  transition: background 0.2s ease;
+}
+
+.calendar-day:not(.empty):not(.sunday):hover {
+  background: #fafcff;
+}
+
+.calendar-day.empty {
+  background: #f8f9fc;
+}
+
+.calendar-day.sunday {
+  background: #fff8f8;
+}
+
+
+/* =========================================================
+   DATE HEADER
+   ========================================================= */
+
+.calendar-day-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 6px;
+
+  margin-bottom: 9px;
+}
+
+.calendar-day-top strong {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+
+  min-width: 28px;
+  height: 28px;
+
+  border-radius: 8px;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  color: #203856;
+}
+
+.calendar-day.sunday .calendar-day-top strong {
+  color: #c84d4d;
+}
+
+.sunday-label {
+  font-size: 10px;
+  font-weight: 600;
+
+  color: #c75c5c;
+}
+
+
+/* =========================================================
+   ADD SCHEDULE BUTTON
+   ========================================================= */
+
+.calendar-add {
+  width: 100%;
+
+  border: 1px dashed #b9c7db;
+  border-radius: 8px;
+
+  background: #f8faff;
+  color: #315fc4;
+
+  padding: 7px 8px;
+
+  margin-bottom: 8px;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.calendar-add:hover {
+  background: #edf3ff;
+  border-color: #7294df;
+}
+
+
+/* =========================================================
+   CONTENT ENTRIES
+   ========================================================= */
+
+.calendar-entries {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.calendar-entry {
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  gap: 3px;
+
+  text-align: left;
+
+  border: 1px solid #dce5f2;
+  border-radius: 9px;
+
+  background: #ffffff;
+
+  padding: 8px;
+
+  cursor: pointer;
+
+  overflow: hidden;
+
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.calendar-entry:hover {
+  border-color: #9bb1d8;
+  background: #f9fbff;
+}
+
+.calendar-entry strong {
+  width: 100%;
+
+  color: #18365f;
+
+  font-size: 12px;
+  font-weight: 700;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.calendar-entry span {
+  width: 100%;
+
+  color: #50627b;
+
+  font-size: 11px;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.calendar-entry small {
+  width: 100%;
+
+  color: #8492a7;
+
+  font-size: 10px;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   STATUS BADGE INSIDE CALENDAR
+   ========================================================= */
+
+.calendar-entry .badge {
+  width: auto;
+  margin-top: 4px;
+
+  padding: 3px 6px;
+
+  border-radius: 999px;
+
+  font-size: 9px;
+  font-weight: 600;
+}
+
+
+/* =========================================================
+   EMPTY TEXT
+   ========================================================= */
+
+.calendar-empty-text {
+  margin: 10px 0 0;
+
+  text-align: center;
+
+  color: #a1adbd;
+
+  font-size: 11px;
+}
+
+
+/* =========================================================
+   PAGE EMPTY STATE
+   ========================================================= */
+
+.calendar-empty-state {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  min-height: 220px;
+
+  padding: 30px;
+
+  background: #ffffff;
+
+  border: 1px dashed #cbd6e6;
+  border-radius: 16px;
+
+  text-align: center;
+}
+
+.calendar-empty-state h3 {
+  margin: 0 0 8px;
+
+  color: #183253;
+
+  font-size: 18px;
+}
+
+.calendar-empty-state p {
+  margin: 0;
+
+  color: #7a899d;
+
+  font-size: 14px;
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 1100px) {
+
+  .metric-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .calendar-grid,
+  .calendar-weekdays {
+    min-width: 850px;
+  }
+
+  .content-calendar {
+    overflow-x: auto;
+  }
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 760px) {
+
+  .page-heading {
+    margin-bottom: 20px;
+  }
+
+  .calendar-filter-card {
+    padding: 16px;
+  }
+
+  .calendar-filter {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .metric-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .content-calendar {
+    padding: 14px;
+    overflow-x: auto;
+  }
+
+  .calendar-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .calendar-grid,
+  .calendar-weekdays {
+    min-width: 760px;
+  }
+
+  .calendar-day {
+    min-height: 140px;
+  }
+}

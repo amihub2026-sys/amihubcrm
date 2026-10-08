@@ -1,0 +1,316 @@
+<div class="page-heading">
+  <div>
+    <div class="eyebrow">
+      DIGITAL MARKETING / REMINDERS
+    </div>
+
+    <h1>Today's Reminders</h1>
+
+    <p>
+      Today's scheduled digital marketing work for all customers.
+    </p>
+  </div>
+</div>
+
+
+<!-- =====================================================
+     SUMMARY
+===================================================== -->
+
+<div class="reminder-summary">
+
+  <article class="summary-card">
+    <span>Today's Work</span>
+
+    <strong>
+      {{ todayReminders.length }}
+    </strong>
+
+    <small>
+      Total scheduled today
+    </small>
+  </article>
+
+
+  <article class="summary-card pending">
+    <span>Pending</span>
+
+    <strong>
+      {{ pendingReminders.length }}
+    </strong>
+
+    <small>
+      Needs attention
+    </small>
+  </article>
+
+
+  <article class="summary-card completed">
+    <span>Completed</span>
+
+    <strong>
+      {{ completedReminders.length }}
+    </strong>
+
+    <small>
+      Finished today
+    </small>
+  </article>
+
+</div>
+
+
+<!-- =====================================================
+     PENDING REMINDERS
+===================================================== -->
+
+<section class="reminders-section">
+
+  <div class="section-heading">
+
+    <div>
+      <h2>Pending Work</h2>
+
+      <p>
+        All unfinished work scheduled for today.
+      </p>
+    </div>
+
+    <span
+      class="pending-count"
+      *ngIf="pendingReminders.length"
+    >
+      {{ pendingReminders.length }}
+    </span>
+
+  </div>
+
+
+  <div
+    class="reminder-list"
+    *ngIf="pendingReminders.length"
+  >
+
+    <article
+      class="reminder-card"
+      *ngFor="let item of pendingReminders"
+    >
+
+      <!-- RED PENDING DOT -->
+
+      <div class="reminder-status-dot">
+        <span class="red-dot"></span>
+
+        <span>Pending</span>
+      </div>
+
+
+      <!-- CUSTOMER -->
+
+      <div class="reminder-customer">
+
+        <h3>
+          {{ customerName(item) }}
+        </h3>
+
+        <span>
+          {{ item.contentType || 'Content' }}
+        </span>
+
+      </div>
+
+
+      <!-- CONTENT TITLE -->
+
+      <div class="reminder-content">
+
+        <strong>
+          {{ item.title || 'Untitled content' }}
+        </strong>
+
+        <p *ngIf="item.platform">
+          {{ item.platform }}
+        </p>
+
+      </div>
+
+
+      <!-- ASSIGNED EMPLOYEE -->
+
+      <div class="reminder-detail">
+
+        <span>Assigned to</span>
+
+        <strong>
+          {{ employeeName(item) }}
+        </strong>
+
+      </div>
+
+
+      <!-- DATE -->
+
+      <div class="reminder-detail">
+
+        <span>Scheduled Date</span>
+
+        <strong>
+          {{ item.scheduledDate }}
+        </strong>
+
+      </div>
+
+
+      <!-- STATUS -->
+
+      <div class="reminder-detail">
+
+        <span>Status</span>
+
+        <strong>
+          {{ pretty(recordStatus(item)) }}
+        </strong>
+
+      </div>
+
+
+      <!-- ACTION -->
+
+      <div class="reminder-actions">
+
+        <button
+          type="button"
+          class="details-btn"
+          (click)="show(item)"
+        >
+          View Details
+        </button>
+
+      </div>
+
+    </article>
+
+  </div>
+
+
+  <!-- NO PENDING WORK -->
+
+  <div
+    class="empty-reminders"
+    *ngIf="!pendingReminders.length"
+  >
+
+    <div class="empty-icon">
+      ✓
+    </div>
+
+    <h3>No pending reminders</h3>
+
+    <p>
+      All scheduled work for today is completed.
+    </p>
+
+  </div>
+
+</section>
+
+
+<!-- =====================================================
+     COMPLETED TODAY
+===================================================== -->
+
+<section
+  class="reminders-section completed-section"
+  *ngIf="completedReminders.length"
+>
+
+  <div class="section-heading">
+
+    <div>
+      <h2>Completed Today</h2>
+
+      <p>
+        Work already completed today.
+      </p>
+    </div>
+
+  </div>
+
+
+  <div class="reminder-list">
+
+    <article
+      class="reminder-card completed-card"
+      *ngFor="let item of completedReminders"
+    >
+
+      <div class="reminder-status-dot completed">
+
+        <span class="green-dot"></span>
+
+        <span>Completed</span>
+
+      </div>
+
+
+      <div class="reminder-customer">
+
+        <h3>
+          {{ customerName(item) }}
+        </h3>
+
+        <span>
+          {{ item.contentType || 'Content' }}
+        </span>
+
+      </div>
+
+
+      <div class="reminder-content">
+
+        <strong>
+          {{ item.title || 'Untitled content' }}
+        </strong>
+
+        <p *ngIf="item.platform">
+          {{ item.platform }}
+        </p>
+
+      </div>
+
+
+      <div class="reminder-detail">
+
+        <span>Assigned to</span>
+
+        <strong>
+          {{ employeeName(item) }}
+        </strong>
+
+      </div>
+
+
+      <div class="reminder-actions">
+
+        <button
+          type="button"
+          class="details-btn"
+          (click)="show(item)"
+        >
+          View Details
+        </button>
+
+      </div>
+
+    </article>
+
+  </div>
+
+</section>
+
+
+<!-- =====================================================
+     VIEW / EDIT DETAILS MODAL
+===================================================== -->
+
+<app-record-editor [vm]="this" />

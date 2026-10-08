@@ -1,12 +1,324 @@
 <div class="page-heading">
- <div><div class="eyebrow">DIGITAL MARKETING / CONTENT CALENDAR</div><h1>Content calendar</h1><p>Track creative work from planning through publication.</p></div>
- <button class="primary" (click)="open()" *ngIf="canCreate">＋ Add record</button>
-</div>
-<div class="metric-grid compact">
- <article class="metric"><span>Total content calendar</span><strong>{{rows.length}}</strong><small>Matching current filters</small></article>
- <article class="metric"><span>Needs attention</span><strong>{{overdue}}</strong><small>Past due date</small></article>
- <article class="metric"><span>{{summaryAmount?'Tracked value':'Workflow stages'}}</span><strong>{{summaryAmount?('₹'+summaryAmount.toLocaleString('en-IN')):tab.statuses.length}}</strong><small>Across these records</small></article>
+  <div>
+    <div class="eyebrow">
+      DIGITAL MARKETING / CONTENT CALENDAR
+    </div>
+
+    <h1>Content Calendar</h1>
+
+    <p>
+      Select a customer and monthly plan to schedule posters and videos.
+    </p>
+  </div>
 </div>
 
-<app-record-table [vm]="this" />
+
+<!-- ========================= -->
+<!-- CUSTOMER + MONTHLY PLAN -->
+<!-- ========================= -->
+
+<section class="calendar-filter-card">
+
+  <div class="calendar-filter">
+
+    <label>
+      Customer
+
+      <select
+        [value]="selectedCustomerId"
+        (change)="selectCustomer($any($event.target).value)"
+      >
+        <option value="">
+          Select customer
+        </option>
+
+        <option
+          *ngFor="let customer of customers"
+          [value]="customer.id"
+        >
+          {{ label(customer) }}
+        </option>
+      </select>
+    </label>
+
+
+    <label>
+      Monthly Plan
+
+      <select
+        [value]="selectedPlanId"
+        (change)="selectPlan($any($event.target).value)"
+        [disabled]="!selectedCustomerId"
+      >
+        <option value="">
+          Select monthly plan
+        </option>
+
+        <option
+          *ngFor="let plan of customerPlans"
+          [value]="plan.id"
+        >
+          {{ plan.month }}
+          —
+          {{
+            store.label(
+              'digitalMarketingPlans',
+              plan.digitalMarketingPlanId
+            )
+          }}
+        </option>
+      </select>
+    </label>
+
+  </div>
+
+</section>
+
+
+<!-- ========================= -->
+<!-- SELECTED PLAN SUMMARY -->
+<!-- ========================= -->
+
+<ng-container *ngIf="selectedPlan">
+
+  <div class="metric-grid compact">
+
+    <article class="metric">
+      <span>Posters</span>
+
+      <strong>
+        {{ scheduledPosters }} / {{ posterTarget }}
+      </strong>
+
+      <small>
+        {{ remainingPosters }} remaining
+      </small>
+    </article>
+
+
+    <article class="metric">
+      <span>Videos</span>
+
+      <strong>
+        {{ scheduledVideos }} / {{ videoTarget }}
+      </strong>
+
+      <small>
+        {{ remainingVideos }} remaining
+      </small>
+    </article>
+
+
+    <article class="metric">
+      <span>Monthly Plan</span>
+
+      <strong>
+        {{
+          store.label(
+            'digitalMarketingPlans',
+            selectedPlan.digitalMarketingPlanId
+          )
+        }}
+      </strong>
+
+      <small>
+        {{ selectedPlan.month }}
+      </small>
+    </article>
+
+  </div>
+
+
+  <!-- ========================= -->
+  <!-- CALENDAR -->
+  <!-- ========================= -->
+
+  <section class="content-calendar">
+
+    <div class="calendar-header">
+
+      <div>
+        <h2>
+          {{ selectedPlan.month }}
+        </h2>
+
+        <p>
+          Schedule and manage the customer's posters and videos.
+        </p>
+      </div>
+
+    </div>
+
+
+    <!-- ========================= -->
+    <!-- WEEK DAYS -->
+    <!-- ========================= -->
+
+    <div class="calendar-weekdays">
+      <div>Sun</div>
+      <div>Mon</div>
+      <div>Tue</div>
+      <div>Wed</div>
+      <div>Thu</div>
+      <div>Fri</div>
+      <div>Sat</div>
+    </div>
+
+
+    <!-- ========================= -->
+    <!-- CALENDAR DAYS -->
+    <!-- ========================= -->
+
+    <div class="calendar-grid">
+
+      <div
+        *ngFor="let cell of calendarCells"
+        class="calendar-day"
+        [class.empty]="cell.empty"
+        [class.sunday]="cell.isSunday"
+      >
+
+        <ng-container *ngIf="!cell.empty">
+
+
+          <!-- DATE HEADER -->
+
+          <div class="calendar-day-top">
+
+            <strong>
+              {{ cell.day }}
+            </strong>
+
+            <span
+              class="sunday-label"
+              *ngIf="cell.isSunday"
+            >
+              Sunday
+            </span>
+
+          </div>
+
+
+          <!-- ========================= -->
+          <!-- ADD CONTENT -->
+          <!-- ========================= -->
+
+          <button
+            *ngIf="!cell.isSunday && canCreate"
+            type="button"
+            class="calendar-add"
+            (click)="scheduleDate(cell)"
+          >
+            ＋ Schedule
+          </button>
+
+
+          <!-- ========================= -->
+          <!-- EXISTING SCHEDULED CONTENT -->
+          <!-- ========================= -->
+
+          <div class="calendar-entries">
+
+            <button
+              type="button"
+              class="calendar-entry"
+              *ngFor="let item of cell.entries"
+              (click)="show(item)"
+            >
+
+              <strong>
+                {{ item.contentType || 'Content' }}
+              </strong>
+
+              <span>
+                {{ item.title }}
+              </span>
+
+              <small *ngIf="item.platform">
+                {{ item.platform }}
+              </small>
+
+              <small *ngIf="item.assignedTo">
+                Assigned:
+                {{
+                  store.label(
+                    'directory',
+                    item.assignedTo
+                  )
+                }}
+              </small>
+
+              <span
+                class="badge"
+                [ngClass]="tone(recordStatus(item))"
+              >
+                {{ pretty(recordStatus(item)) }}
+              </span>
+
+            </button>
+
+          </div>
+
+
+          <!-- ========================= -->
+          <!-- EMPTY DATE -->
+          <!-- ========================= -->
+
+          <p
+            class="calendar-empty-text"
+            *ngIf="
+              !cell.entries.length &&
+              !cell.isSunday
+            "
+          >
+            No content scheduled
+          </p>
+
+
+          <!-- ========================= -->
+          <!-- SUNDAY -->
+          <!-- ========================= -->
+
+          <p
+            class="calendar-empty-text"
+            *ngIf="cell.isSunday"
+          >
+            No scheduling
+          </p>
+
+        </ng-container>
+
+      </div>
+
+    </div>
+
+  </section>
+
+</ng-container>
+
+
+<!-- ========================= -->
+<!-- EMPTY STATE -->
+<!-- ========================= -->
+
+<section
+  class="calendar-empty-state"
+  *ngIf="!selectedPlan"
+>
+
+  <h3>
+    Select customer and monthly plan
+  </h3>
+
+  <p>
+    The customer's poster and video schedule will appear here.
+  </p>
+
+</section>
+
+
+<!-- ========================= -->
+<!-- EXISTING CREATE / EDIT MODAL -->
+<!-- ========================= -->
+
 <app-record-editor [vm]="this" />

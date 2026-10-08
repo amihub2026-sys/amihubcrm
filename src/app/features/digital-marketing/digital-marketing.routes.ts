@@ -9,6 +9,18 @@ export const DIGITALMARKETING_ROUTES: Routes = [
   },
 
   {
+    path: 'plan-packages',
+    canActivate: [permissionGuard],
+    data: {
+      resource: 'digitalMarketingPlans',
+    },
+    loadComponent: () =>
+      import('./pages/plan-packages/plan-packages.component').then(
+        (m) => m.PlanPackagesPageComponent,
+      ),
+  },
+
+  {
     path: 'plans',
     canActivate: [permissionGuard],
     data: {
@@ -32,6 +44,25 @@ export const DIGITALMARKETING_ROUTES: Routes = [
       ),
   },
 
+  // =====================================================
+  // DIGITAL MARKETING REMINDERS
+  // =====================================================
+  {
+    path: 'reminders',
+    canActivate: [permissionGuard],
+    data: {
+      resource: 'content',
+    },
+    loadComponent: () =>
+      import('./pages/reminders/reminders.component').then(
+        (m) => m.RemindersPageComponent,
+      ),
+  },
+
+  // =====================================================
+  // OLD CAMPAIGN ROUTE
+  // Hidden from top navigation
+  // =====================================================
   {
     path: 'campaigns',
     canActivate: [permissionGuard],
@@ -44,6 +75,10 @@ export const DIGITALMARKETING_ROUTES: Routes = [
       ),
   },
 
+  // =====================================================
+  // OLD CAMPAIGN LEADS ROUTE
+  // Hidden from top navigation
+  // =====================================================
   {
     path: 'campaignLeads',
     canActivate: [permissionGuard],
@@ -56,6 +91,24 @@ export const DIGITALMARKETING_ROUTES: Routes = [
       ),
   },
 
+  // =====================================================
+  // META ADS RUNNING
+  // =====================================================
+  {
+    path: 'meta-ads-running',
+    canActivate: [permissionGuard],
+    data: {
+      resource: 'campaigns',
+    },
+    loadComponent: () =>
+      import('./pages/meta-ads-running/meta-ads-running.component').then(
+        (m) => m.MetaAdsRunningComponent,
+      ),
+  },
+
+  // =====================================================
+  // META ADS TRACKING
+  // =====================================================
   {
     path: 'meta-ads',
     canActivate: [permissionGuard],
