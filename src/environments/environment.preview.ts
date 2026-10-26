@@ -1,1 +1,1 @@
-export const environment={production:false,apiUrl:'/api',preview:true};
+export const environment={production:false,apiUrl:'https://amihubcrmbackend.onrender.com/api',preview:true};
