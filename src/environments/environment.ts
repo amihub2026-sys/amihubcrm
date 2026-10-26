@@ -1,5 +1,5 @@
 export const environment = {
   production: false,
   preview: false,
-  apiUrl: '/api'
+  apiUrl: 'https://amihubcrmbackend.onrender.com/api'
 };
