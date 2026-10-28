@@ -27,7 +27,49 @@ export class CrmStore {
   }
 }
  
- if(record.status!==undefined)body['status']=record.status;if(record.items)body['items']=record.items;if(record.initialPassword)body['initialPassword']=record.initialPassword;if(record.id)body['expectedRevision']=record.revision;
+ if(record.status!==undefined)body['status']=record.status;
+ 
+    // Invoice-only manual customer and project fields.
+    // These details are saved on the invoice, not as new CRM records.
+    if (key === 'invoices') {
+      const manualFields = [
+        'manualCustomerName',
+        'manualCustomerPhone',
+        'manualCustomerAddress',
+        'manualCustomerGstin',
+        'manualProjectName'
+      ];
+
+      for (const field of manualFields) {
+        if (record[field] !== undefined && record[field] !== null) {
+          body[field] = String(record[field]).trim();
+        }
+      }
+
+      const manualName = String(
+        body['manualCustomerName'] || ''
+      ).trim();
+
+      if (manualName) {
+        // Manual customer: no registered customer reference.
+        delete body['customerId'];
+      }
+
+      const manualProject = String(
+        body['manualProjectName'] || ''
+      ).trim();
+
+      if (manualProject) {
+        delete body['projectId'];
+      }
+    }
+
+ 
+ 
+ 
+ 
+ 
+ if(record.items)body['items']=record.items;if(record.initialPassword)body['initialPassword']=record.initialPassword;if(record.id)body['expectedRevision']=record.revision;
  const result=await this.request<{record:any}>(record.id?'PATCH':'POST','/'+key+(record.id?'/'+encodeURIComponent(record.id):''),body);
  this.records.update(state=>({...state,[key]:[result.record,...this.list(key).filter(x=>x.id!==result.record.id)]}));
  const related=key==='payments'||key==='installments'?['invoices','installments']:key==='invoices'?['installments']:key==='calls'?['followups']:[];try{await Promise.all(related.map(r=>this.refresh(r)));}catch{this.toast('Saved, but related records could not be refreshed. Reload the workspace.');}return result.record;}
