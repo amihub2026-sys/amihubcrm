@@ -407,145 +407,327 @@ get visibleFields() {
     this.detail = x;
     this.detailTab = "Overview";
   }
-  async save() {
-    if (this.draft.id ? !this.canEditRecord(this.draft) : !this.canCreate)
-      return;
-    this.error = "";
-    const first = this.tab.fields[0];
-    if (!String(this.draft[first.key] || "").trim()) {
-      this.error = first.label + " is required.";
-      return;
-    }
-    if (this.commercial) {
-      if (
-        !this.draft.items?.length ||
-        this.draft.items.some(
-          (i: any) =>
-            !i.description?.trim() ||
-            Number(i.quantity) <= 0 ||
-            Number(i.unitPrice) < 0,
-        )
-      ) {
-        this.error =
-          "Add at least one line item with a description, positive quantity and valid price.";
-        return;
-      }
-      this.calcItems();
-      if (Number(this.draft.discount || 0) > Number(this.draft.subtotal)) {
-        this.error = "Discount cannot exceed subtotal.";
-        return;
-      }
-    }
-    for (const f of this.tab.fields) {
-      const v = this.draft[f.key];
-      if (f.required && (v === undefined || v === null || v === "")) {
-        this.error = f.label + " is required.";
-        return;
-      }
-      if (f.options && v && !f.options.includes(v)) {
-        this.error = "Choose a valid " + f.label.toLowerCase();
-        return;
-      }
-      if (
-        f.type === "number" &&
-        v !== undefined &&
-        v !== "" &&
-        (!Number.isFinite(Number(v)) || Number(v) < 0)
-      ) {
-        this.error = f.label + " must be a non-negative number.";
-        return;
-      }
-      if (f.type === "email" && v && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) {
-        this.error = "Enter a valid email address.";
-        return;
-      }
-      if (f.type === "url" && v && !/^https?:\/\//.test(v)) {
-        this.error = "File links must start with https:// or http://.";
-        return;
-      }
-    }
+
+async save() {
+  if (
+    this.draft.id
+      ? !this.canEditRecord(this.draft)
+      : !this.canCreate
+  ) {
+    return;
+  }
+
+  this.error = "";
+
+  // =========================================
+  // MANUAL / EXISTING CUSTOMER VALIDATION
+  // =========================================
+
+  const isInvoice = this.tab.key === "invoices";
+
+  const hasManualCustomer =
+    isInvoice &&
+    Boolean(
+      String(this.draft.manualCustomerName || "").trim()
+    );
+
+  const hasExistingCustomer =
+    isInvoice &&
+    Boolean(
+      String(this.draft.customerId || "").trim()
+    );
+
+  if (
+    isInvoice &&
+    !hasExistingCustomer &&
+    !hasManualCustomer
+  ) {
+    this.error =
+      "Select an existing customer or enter a customer name.";
+    return;
+  }
+
+  // =========================================
+  // FIRST FIELD VALIDATION
+  // =========================================
+
+  const first = this.tab.fields[0];
+
+  if (
+    !(
+      isInvoice &&
+      first.key === "customerId" &&
+      hasManualCustomer
+    ) &&
+    !String(this.draft[first.key] || "").trim()
+  ) {
+    this.error = first.label + " is required.";
+    return;
+  }
+
+  // =========================================
+  // INVOICE / QUOTATION LINE ITEMS
+  // =========================================
+
+  if (this.commercial) {
     if (
-      this.tab.key === "campaigns" &&
-      Number(this.draft.conversions) > Number(this.draft.leadCount)
+      !this.draft.items?.length ||
+      this.draft.items.some(
+        (i: any) =>
+          !i.description?.trim() ||
+          Number(i.quantity) <= 0 ||
+          Number(i.unitPrice) < 0
+      )
     ) {
-      this.error = "Conversions cannot exceed reported leads.";
-      return;
-    }
-    if (Number(this.draft.progress || 0) > 100) {
-      this.error = "Progress cannot exceed 100%.";
-      return;
-    }
-    if (
-      this.draft.startDate &&
-      ((this.draft.endDate && this.draft.endDate < this.draft.startDate) ||
-        (this.draft.deadline && this.draft.deadline < this.draft.startDate))
-    ) {
-      this.error = "End date must follow the start date.";
-      return;
-    }
-    if (this.tab.key === "payments") {
-      const inv = this.store
-        .list("invoices")
-        .find((i) => i.id === this.draft.invoiceId);
-      const old = this.store
-        .list("payments")
-        .find((p) => p.id === this.draft.id);
-      const available = inv
-        ? this.store.balance(inv) +
-          (old?.invoiceId === inv.id ? Number(old.amount) : 0)
-        : 0;
-      if (
-        !inv ||
-        Number(this.draft.amount) <= 0 ||
-        Number(this.draft.amount) > available
-      ) {
-        this.error =
-          "Choose an invoice and enter an amount within its outstanding balance.";
-        return;
-      }
-      if (this.draft.installmentId) {
-        const inst = this.store
-          .list("installments")
-          .find((i) => i.id === this.draft.installmentId);
-        const paid = this.store
-          .list("payments")
-          .filter((p) => p.installmentId === inst?.id && p.id !== this.draft.id)
-          .reduce((s, p) => s + Number(p.amount), 0);
-        if (
-          !inst ||
-          inst.invoiceId !== inv.id ||
-          Number(this.draft.amount) > Number(inst.amount) - paid
-        ) {
-          this.error =
-            "Payment must match the installment invoice and remaining amount.";
-          return;
-        }
-      }
-    }
-    if (
-      this.tab.key === "renewals" &&
-      (!this.draft.expiryDate || this.draft.expiryDate <= this.draft.startDate)
-    ) {
-      this.error = "Enter an expiry date after the service start date.";
-      return;
-    }
-    this.saving = true;
-    try {
-      await this.domain.save(
-        this.tab.key,
-        this.draft,
-        this.auth.user()?.name || "Admin",
-      );
-      this.modal = false;
-      this.detail = null;
-      this.store.toast("Record saved successfully.");
-    } catch (error: any) {
       this.error =
-        error?.error?.message || "The record could not be saved. Please retry.";
-    } finally {
-      this.saving = false;
+        "Add at least one line item with a description, positive quantity and valid price.";
+      return;
+    }
+
+    this.calcItems();
+
+    if (
+      Number(this.draft.discount || 0) >
+      Number(this.draft.subtotal)
+    ) {
+      this.error = "Discount cannot exceed subtotal.";
+      return;
     }
   }
+
+  // =========================================
+  // STANDARD FIELD VALIDATION
+  // =========================================
+
+  for (const f of this.tab.fields) {
+    const v = this.draft[f.key];
+
+    // Manual customer replaces customerId
+    // requirement for invoices only.
+    const skipCustomerIdRequirement =
+      isInvoice &&
+      f.key === "customerId" &&
+      hasManualCustomer;
+
+    if (
+      f.required &&
+      !skipCustomerIdRequirement &&
+      (
+        v === undefined ||
+        v === null ||
+        v === ""
+      )
+    ) {
+      this.error = f.label + " is required.";
+      return;
+    }
+
+    if (
+      f.options &&
+      v &&
+      !f.options.includes(v)
+    ) {
+      this.error =
+        "Choose a valid " + f.label.toLowerCase();
+      return;
+    }
+
+    if (
+      f.type === "number" &&
+      v !== undefined &&
+      v !== "" &&
+      (
+        !Number.isFinite(Number(v)) ||
+        Number(v) < 0
+      )
+    ) {
+      this.error =
+        f.label + " must be a non-negative number.";
+      return;
+    }
+
+    if (
+      f.type === "email" &&
+      v &&
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)
+    ) {
+      this.error = "Enter a valid email address.";
+      return;
+    }
+
+    if (
+      f.type === "url" &&
+      v &&
+      !/^https?:\/\//.test(v)
+    ) {
+      this.error =
+        "File links must start with https:// or http://.";
+      return;
+    }
+  }
+
+  // =========================================
+  // CAMPAIGN VALIDATION
+  // =========================================
+
+  if (
+    this.tab.key === "campaigns" &&
+    Number(this.draft.conversions) >
+      Number(this.draft.leadCount)
+  ) {
+    this.error =
+      "Conversions cannot exceed reported leads.";
+    return;
+  }
+
+  // =========================================
+  // PROGRESS VALIDATION
+  // =========================================
+
+  if (
+    Number(this.draft.progress || 0) > 100
+  ) {
+    this.error = "Progress cannot exceed 100%.";
+    return;
+  }
+
+  // =========================================
+  // DATE VALIDATION
+  // =========================================
+
+  if (
+    this.draft.startDate &&
+    (
+      (
+        this.draft.endDate &&
+        this.draft.endDate < this.draft.startDate
+      ) ||
+      (
+        this.draft.deadline &&
+        this.draft.deadline < this.draft.startDate
+      )
+    )
+  ) {
+    this.error =
+      "End date must follow the start date.";
+    return;
+  }
+
+  // =========================================
+  // PAYMENT VALIDATION
+  // =========================================
+
+  if (this.tab.key === "payments") {
+    const inv = this.store
+      .list("invoices")
+      .find(
+        (i) => i.id === this.draft.invoiceId
+      );
+
+    const old = this.store
+      .list("payments")
+      .find(
+        (p) => p.id === this.draft.id
+      );
+
+    const available = inv
+      ? this.store.balance(inv) +
+        (
+          old?.invoiceId === inv.id
+            ? Number(old.amount)
+            : 0
+        )
+      : 0;
+
+    if (
+      !inv ||
+      Number(this.draft.amount) <= 0 ||
+      Number(this.draft.amount) > available
+    ) {
+      this.error =
+        "Choose an invoice and enter an amount within its outstanding balance.";
+      return;
+    }
+
+    if (this.draft.installmentId) {
+      const inst = this.store
+        .list("installments")
+        .find(
+          (i) => i.id === this.draft.installmentId
+        );
+
+      const paid = this.store
+        .list("payments")
+        .filter(
+          (p) =>
+            p.installmentId === inst?.id &&
+            p.id !== this.draft.id
+        )
+        .reduce(
+          (s, p) => s + Number(p.amount),
+          0
+        );
+
+      if (
+        !inst ||
+        inst.invoiceId !== inv.id ||
+        Number(this.draft.amount) >
+          Number(inst.amount) - paid
+      ) {
+        this.error =
+          "Payment must match the installment invoice and remaining amount.";
+        return;
+      }
+    }
+  }
+
+  // =========================================
+  // RENEWAL VALIDATION
+  // =========================================
+
+  if (
+    this.tab.key === "renewals" &&
+    (
+      !this.draft.expiryDate ||
+      this.draft.expiryDate <=
+        this.draft.startDate
+    )
+  ) {
+    this.error =
+      "Enter an expiry date after the service start date.";
+    return;
+  }
+
+  // =========================================
+  // SAVE TO BACKEND
+  // =========================================
+
+  this.saving = true;
+
+  try {
+    await this.domain.save(
+      this.tab.key,
+      this.draft,
+      this.auth.user()?.name || "Admin"
+    );
+
+    this.modal = false;
+    this.detail = null;
+
+    this.store.toast(
+      "Record saved successfully."
+    );
+
+  } catch (error: any) {
+    this.error =
+      error?.error?.message ||
+      "The record could not be saved. Please retry.";
+
+  } finally {
+    this.saving = false;
+  }
+}
+
   async remove() {
     if (!this.canDelete || !this.confirmDelete) return;
     const id = this.confirmDelete.id;

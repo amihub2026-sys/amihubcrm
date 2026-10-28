@@ -1,1 +1,461 @@
-:host{display:block}.document-toolbar{display:flex;justify-content:space-between;margin-bottom:22px}.billing-paper{max-width:900px;margin:auto;background:white;padding:45px;border:1px solid var(--line);border-radius:8px}.billing-paper header{display:flex;justify-content:space-between;gap:30px;border-bottom:3px solid #183a65;padding-bottom:26px}.document-brand{font-size:30px;font-weight:800;color:#173458}.document-heading{text-align:right;max-width:45%;overflow-wrap:anywhere}.document-heading>span{font-size:14px;text-transform:uppercase;letter-spacing:2px}.document-heading h1{font-size:20px;margin:12px 0}.billing-paper p{font-size:14px;white-space:pre-line}.bill-parties{display:flex;justify-content:space-between;gap:25px;padding:28px 0}.caption{font-size:12px;letter-spacing:1px;color:#7d8ca2}.bill-parties h2{margin:9px 0}.billing-paper table{width:100%;border-collapse:collapse}.billing-paper th,.billing-paper td{padding:14px 10px;text-align:right;font-size:14px;border-bottom:1px solid var(--line)}.billing-paper th{background:#edf2fa}.billing-paper th:first-child,.billing-paper td:first-child{text-align:left}.bill-totals{display:grid;grid-template-columns:1fr 1fr;max-width:350px;margin:25px 0 30px auto;gap:12px;font-size:14px}.bill-totals dd{margin:0;text-align:right}.bill-totals .total{font-size:18px;font-weight:800;border-top:1px solid var(--line);padding-top:15px}.receipt-amount{padding:30px;background:#edf4fc;border-radius:8px;margin-bottom:25px}.receipt-amount strong{display:block;font-size:34px;margin-top:12px}.billing-paper footer{border-top:1px solid var(--line);padding-top:22px;display:grid;gap:20px}.billing-paper h3{font-size:14px;margin-bottom:7px}@media(max-width:760px){.billing-paper{padding:20px}.billing-paper header,.bill-parties{flex-direction:column}.document-heading{text-align:left;max-width:100%}.billing-paper th,.billing-paper td{padding:10px 4px;font-size:12px}}@media print{:host{display:block}.document-toolbar{display:none}.billing-paper{border:0;padding:0;max-width:none}.billing-paper table{break-inside:auto}.billing-paper tr{break-inside:avoid}.billing-paper footer{break-inside:avoid}}
+:host {
+    display: block
+}
+
+.document-toolbar {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 22px
+}
+
+.billing-paper {
+    max-width: 900px;
+    margin: auto;
+    background: white;
+    padding: 45px;
+    border: 1px solid var(--line);
+    border-radius: 8px
+}
+
+.billing-paper header {
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+    border-bottom: 3px solid #183a65;
+    padding-bottom: 26px
+}
+
+.document-brand {
+    font-size: 30px;
+    font-weight: 800;
+    color: #173458
+}
+
+.document-heading {
+    text-align: right;
+    max-width: 45%;
+    overflow-wrap: anywhere
+}
+
+.document-heading>span {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 2px
+}
+
+.document-heading h1 {
+    font-size: 20px;
+    margin: 12px 0
+}
+
+.billing-paper p {
+    font-size: 14px;
+    white-space: pre-line
+}
+
+.bill-parties {
+    display: flex;
+    justify-content: space-between;
+    gap: 25px;
+    padding: 28px 0
+}
+
+.caption {
+    font-size: 12px;
+    letter-spacing: 1px;
+    color: #7d8ca2
+}
+
+.bill-parties h2 {
+    margin: 9px 0
+}
+
+.billing-paper table {
+    width: 100%;
+    border-collapse: collapse
+}
+
+.billing-paper th,
+.billing-paper td {
+    padding: 14px 10px;
+    text-align: right;
+    font-size: 14px;
+    border-bottom: 1px solid var(--line)
+}
+
+.billing-paper th {
+    background: #edf2fa
+}
+
+.billing-paper th:first-child,
+.billing-paper td:first-child {
+    text-align: left
+}
+
+.bill-totals {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    max-width: 350px;
+    margin: 25px 0 30px auto;
+    gap: 12px;
+    font-size: 14px
+}
+
+.bill-totals dd {
+    margin: 0;
+    text-align: right
+}
+
+.bill-totals .total {
+    font-size: 18px;
+    font-weight: 800;
+    border-top: 1px solid var(--line);
+    padding-top: 15px
+}
+
+.receipt-amount {
+    padding: 30px;
+    background: #edf4fc;
+    border-radius: 8px;
+    margin-bottom: 25px
+}
+
+.receipt-amount strong {
+    display: block;
+    font-size: 34px;
+    margin-top: 12px
+}
+
+.billing-paper footer {
+    border-top: 1px solid var(--line);
+    padding-top: 22px;
+    display: grid;
+    gap: 20px
+}
+
+.billing-paper h3 {
+    font-size: 14px;
+    margin-bottom: 7px
+}
+
+@media(max-width:760px) {
+    .billing-paper {
+        padding: 20px
+    }
+
+    .billing-paper header,
+    .bill-parties {
+        flex-direction: column
+    }
+
+    .document-heading {
+        text-align: left;
+        max-width: 100%
+    }
+
+    .billing-paper th,
+    .billing-paper td {
+        padding: 10px 4px;
+        font-size: 12px
+    }
+}
+
+@media print {
+    :host {
+        display: block
+    }
+
+    .document-toolbar {
+        display: none
+    }
+
+    .billing-paper {
+        border: 0;
+        padding: 0;
+        max-width: none
+    }
+
+    .billing-paper table {
+        break-inside: auto
+    }
+
+    .billing-paper tr {
+        break-inside: avoid
+    }
+
+    .billing-paper footer {
+        break-inside: avoid
+    }
+}
+
+/* AMI HUB printable invoice logo */
+
+.invoice-brand {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 12px;
+}
+
+.invoice-logo {
+  width: 65px;
+  height: 65px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.invoice-brand .document-brand {
+  display: block;
+  font-size: 25px;
+  font-weight: 800;
+  color: #12345b;
+}
+
+.invoice-brand p {
+  margin: 4px 0 0;
+  color: #64748b;
+  font-size: 11px;
+}
+
+.invoice-customer-details h2 {
+  margin: 10px 0;
+  font-size: 16px;
+  color: #12345b;
+}
+
+.invoice-customer-details p {
+  margin: 5px 0;
+  line-height: 1.5;
+  color: #475569;
+  font-size: 12px;
+}
+
+@media print {
+  .invoice-logo {
+    width: 65px;
+    height: 65px;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .invoice-brand,
+  .invoice-customer-details {
+    break-inside: avoid;
+  }
+}
+
+/* ==========================================
+   AMI HUB - PREMIUM INVOICE LOGO HEADER
+   ========================================== */
+
+.billing-paper header .invoice-brand {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  width: 100%;
+  margin: 0;
+}
+
+.billing-paper header .invoice-logo {
+  display: block;
+  width: 100px;
+  height: 100px;
+  max-width: none;
+  flex: 0 0 100px;
+  object-fit: contain;
+  object-position: center;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* Company information */
+
+.billing-paper header .invoice-brand > div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+}
+
+.billing-paper header .document-brand {
+  display: block;
+  margin: 0;
+  color: #15365e;
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+}
+
+.billing-paper header .invoice-brand p {
+  margin: 6px 0 0;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* Invoice number on the right */
+
+.billing-paper header .document-heading {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.billing-paper header .document-heading > span {
+  color: #173b72;
+  letter-spacing: 2px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.billing-paper header .document-heading h1 {
+  color: #15365e;
+  font-size: 22px;
+  font-weight: 800;
+  margin: 8px 0;
+}
+
+/* ==========================================
+   TABLET / MOBILE
+   ========================================== */
+
+@media (max-width: 600px) {
+  .billing-paper header .invoice-brand {
+    gap: 10px;
+  }
+
+  .billing-paper header .invoice-logo {
+    width: 65px;
+    height: 65px;
+    flex-basis: 65px;
+  }
+
+  .billing-paper header .document-brand {
+    font-size: 21px;
+  }
+
+  .billing-paper header .invoice-brand p {
+    font-size: 10px;
+  }
+
+  .billing-paper header .document-heading h1 {
+    font-size: 17px;
+  }
+}
+
+/* ==========================================
+   PRINT / SAVE AS PDF
+   ========================================== */
+
+@media print {
+  .billing-paper header .invoice-logo {
+    width: 90px !important;
+    height: 90px !important;
+    flex-basis: 90px !important;
+    object-fit: contain !important;
+  }
+
+  .billing-paper header .document-brand {
+    font-size: 26px !important;
+  }
+
+  .billing-paper header .invoice-brand,
+  .billing-paper header .invoice-logo {
+    break-inside: avoid;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+}
+
+/* ============================================
+   AMI HUB INVOICE BACKGROUND WATERMARK
+============================================ */
+
+.billing-paper {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+/* Watermark background */
+
+.billing-paper .invoice-watermark {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  pointer-events: none;
+}
+
+/* AMI HUB watermark image */
+
+.billing-paper .invoice-watermark img {
+  display: block;
+
+  width: 65%;
+  max-width: 500px;
+  height: auto;
+
+  object-fit: contain;
+
+  opacity: 0.055;
+
+  transform: rotate(-15deg);
+}
+
+/* Keep invoice content above watermark */
+
+.billing-paper > header,
+.billing-paper > .bill-parties,
+.billing-paper > table,
+.billing-paper > .bill-totals,
+.billing-paper > footer {
+  position: relative;
+  z-index: 1;
+}
+
+/* Mobile view */
+
+@media (max-width: 600px) {
+  .billing-paper .invoice-watermark img {
+    width: 80%;
+    transform: rotate(-12deg);
+  }
+}
+
+/* ============================================
+   PRINT / SAVE AS PDF
+============================================ */
+
+@media print {
+  .billing-paper {
+    isolation: isolate;
+    overflow: hidden;
+    background: #ffffff !important;
+  }
+
+  .billing-paper .invoice-watermark {
+    display: flex !important;
+    z-index: -1;
+  }
+
+  .billing-paper .invoice-watermark img {
+    width: 65%;
+    max-width: 500px;
+    opacity: 0.07 !important;
+
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .document-toolbar {
+    display: none !important;
+  }
+}
